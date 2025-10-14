@@ -26,6 +26,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import EditProfile from "./pages/EditProfile";
 
 setupIonicReact();
 
@@ -55,6 +56,12 @@ const App: React.FC = () => {
           <Route exact path="/register" component={RegisterPage} />
 
           {/* Routes protégées */}
+          <Route
+           exact
+           path="/edit-profile"
+           render={() => (user ? <EditProfile /> : <Redirect to="/login" />)}
+/>
+
           <Route
             exact
             path="/dashboard"

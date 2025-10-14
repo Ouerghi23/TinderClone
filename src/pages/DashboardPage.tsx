@@ -1,315 +1,422 @@
-import React, { useState, useEffect } from "react";
-import TinderCard from "react-tinder-card";
-import { 
-  IonPage, 
-  IonHeader, 
-  IonTitle, 
-  IonContent, 
-  IonToolbar, 
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonFab,
-  IonFabButton,
-  IonChip,
-  IonText,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonBadge
-} from "@ionic/react";
-import { 
-  person, 
-  flame, 
-  chatbubble, 
-  star, 
-  close, 
-  heart, 
-  flash,
-  settings
-} from "ionicons/icons";
-import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
-import { signOut } from "firebase/auth";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { IonApp, IonContent, IonButton, IonIcon } from "@ionic/react";
+import { getAuth, signOut } from "firebase/auth";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { app } from "../firebaseConfig";
 import { useHistory } from "react-router-dom";
+import { personCircleOutline, close, heart, flash } from "ionicons/icons";
 import "../theme/DashboardPage.css";
 
+/* ---------- Types ---------- */
+interface Profile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string;
+  distance: string;
+  images: string[];
+  interests: string[];
+}
+
+interface DragState {
+  isDragging: boolean;
+  startX: number;
+  currentX: number;
+}
+
+/* ---------- Composant principal ---------- */
 const DashboardPage: React.FC = () => {
-  const [profiles, setProfiles] = useState<any[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastDirection, setLastDirection] = useState<string>("");
-  const [matches, setMatches] = useState<any[]>([]);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    startX: 0,
+    currentX: 0,
+  });
   const history = useHistory();
 
-  // Données fictives pour simuler des profils (à remplacer par Firestore)
-  const mockProfiles = [
-    {
-      id: 1,
-      name: "Sarah",
-      age: 25,
-      bio: "J'aime les voyages et la bonne cuisine 🍝✈️",
-      distance: "2 km",
-      images: [
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-      ],
-      interests: ["Voyage", "Cuisine", "Photographie"]
-    },
-    {
-      id: 2,
-      name: "Emma",
-      age: 27,
-      bio: "Artiste passionnée 🎨 | Amoureuse de la nature 🌿",
-      distance: "5 km",
-      images: [
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-      ],
-      interests: ["Art", "Nature", "Yoga"]
-    },
-    {
-      id: 3,
-      name: "Léa",
-      age: 24,
-      bio: "Sportive et aventurière 🏃‍♀️⛰️",
-      distance: "3 km",
-      images: [
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-      ],
-      interests: ["Sport", "Aventure", "Musique"]
-    },
-    {
-      id: 4,
-      name: "Chloé",
-      age: 26,
-      bio: "Développeuse le jour, danseuse la nuit 💃👩‍💻",
-      distance: "4 km",
-      images: [
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-      ],
-      interests: ["Danse", "Tech", "Cinéma"]
-    }
-  ];
+  const currentIndex = useRef(0);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const db = getFirestore(app);
 
+  /* 🔥 Charger profils Firestore */
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        // Pour l'instant on utilise les données fictives
-        setProfiles(mockProfiles);
-        
-        // Récupérer le profil utilisateur
-        const user = auth.currentUser;
-        if (user) {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            setUserProfile(userDoc.data());
-          }
-        }
-      } catch (error) {
-        console.error("Erreur:", error);
-        setProfiles(mockProfiles); // Fallback sur données fictives
-      }
-    };
-    
-    fetchProfiles();
+    const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
+      const fetchedProfiles: Profile[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Profile, "id">),
+      }));
+      setProfiles(fetchedProfiles);
+    });
+    return () => unsubscribe();
+  }, [db]);
+
+  /* 🔄 Swipe */
+  const swipe = useCallback((direction: "left" | "right") => {
+    const currentCardRef = cardRefs.current[currentIndex.current];
+    if (!currentCardRef) return;
+    const moveX = direction === "left" ? -300 : 300;
+    currentCardRef.style.transform = `translate(${moveX}px, 0) rotate(${direction === "left" ? -15 : 15}deg)`;
+    currentCardRef.style.opacity = "0";
+    currentIndex.current += 1;
   }, []);
 
-  const swiped = (direction: string, name: string, id: number) => {
-    console.log(`You swiped ${direction} on ${name}`);
-    setLastDirection(direction);
-    setCurrentIndex(currentIndex + 1);
-    
-    if (direction === 'right') {
-      // Simuler un match
-      const matchedProfile = profiles.find(p => p.id === id);
-      if (matchedProfile && Math.random() > 0.7) { // 30% de chance de match
-        setMatches(prev => [...prev, matchedProfile]);
-      }
+  /* 🖱 Gestion drag */
+  const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    setDragState({ isDragging: true, startX: clientX, currentX: clientX });
+  };
+
+  const handleDragMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!dragState.isDragging) return;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    setDragState((prev) => ({ ...prev, currentX: clientX }));
+    const diff = clientX - dragState.startX;
+    const card = cardRefs.current[currentIndex.current];
+    if (!card) return;
+    card.style.transform = `translate(${diff}px, 0) rotate(${diff * 0.05}deg)`;
+  };
+
+  const handleDragEnd = () => {
+    if (!dragState.isDragging) return;
+    const diff = dragState.currentX - dragState.startX;
+    const threshold = 120;
+    if (Math.abs(diff) > threshold) swipe(diff > 0 ? "right" : "left");
+    else {
+      const card = cardRefs.current[currentIndex.current];
+      if (card) card.style.transform = "translate(0, 0)";
     }
+    setDragState({ isDragging: false, startX: 0, currentX: 0 });
   };
 
-  const outOfFrame = (name: string) => {
-    console.log(`${name} left the screen!`);
-  };
-
+  /* 🚪 Déconnexion */
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      history.push("/login");
-    } catch (error) {
-      console.error("Erreur de déconnexion:", error);
-    }
+    const auth = getAuth(app);
+    await signOut(auth);
+    history.push("/login");
   };
 
-  const swipe = async (dir: string) => {
-    if (currentIndex < profiles.length) {
-      const card = document.querySelector('.swipe') as HTMLElement;
-      if (card) {
-        card.style.transform = `translate(${dir === 'right' ? '200%' : '-200%'}, 0px) rotate(${dir === 'right' ? '20deg' : '-20deg'})`;
-        setTimeout(() => {
-          swiped(dir, profiles[currentIndex].name, profiles[currentIndex].id);
-        }, 300);
-      }
-    }
-  };
+  /* 💳 Affichage des cartes */
+  const renderCards = useMemo(
+    () =>
+      profiles
+        .slice(currentIndex.current)
+        .map((profile, index) => (
+          <div
+            key={profile.id}
+            ref={(el) => (cardRefs.current[index] = el)}
+            className="tinder-card"
+            style={{
+              zIndex: profiles.length - index,
+              transform: `translateY(${index * 10}px) scale(${1 - index * 0.05})`,
+            }}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+          >
+            <img
+              src={profile.images?.[0] || "/assets/default.jpg"}
+              alt={profile.name}
+              className="profile-image"
+            />
+            <div className="profile-info">
+              <h2>
+                {profile.name}, {profile.age}
+              </h2>
+              <p>{profile.bio}</p>
+              <p className="distance">{profile.distance}</p>
+              <div className="interests">
+                {profile.interests?.map((interest, i) => (
+                  <span key={i} className="interest-tag">
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )),
+    [profiles, dragState]
+  );
 
   return (
-    <IonPage style={{
-      background: 'linear-gradient(135deg, #fd297b 0%, #ff5864 50%, #ff655b 100%)'
-    }}>
-      {/* Header */}
-      <IonHeader translucent style={{ background: 'transparent' }}>
-        <IonToolbar style={{ 
-          '--background': 'transparent', 
-          '--color': 'white',
-          '--border-width': '0'
-        }}>
-          <IonButtons slot="start">
-            <IonButton onClick={handleLogout} style={{ '--color': 'white' }}>
-              <IonIcon icon={person} slot="icon-only" />
-            </IonButton>
-          </IonButtons>
+    <IonApp>
+      <IonContent className="dashboard-content">
+        {/* Top Bar avec profil et logo Aura */}
+        <div className="top-bar">
+          <IonButton
+            fill="clear"
+            color="light"
+            className="profile-icon"
+            onClick={() => history.push("/edit-profile")}
+          >
+            <IonIcon icon={personCircleOutline} size="large" />
+          </IonButton>
           
-          <IonTitle style={{ 
-            textAlign: 'center', 
-            fontSize: '28px', 
-            fontWeight: 'bold',
-            letterSpacing: '-0.5px'
-          }}>
-            <IonIcon icon={flame} style={{ 
-              marginRight: '8px',
-              color: '#ffffff',
-              fontSize: '32px'
-            }} />
-            Spark
-          </IonTitle>
-
-          <IonButtons slot="end">
-            <IonButton routerLink="/matches" style={{ '--color': 'white' }}>
-              <IonIcon icon={chatbubble} slot="icon-only" />
-              {matches.length > 0 && (
-                <IonBadge color="danger" style={{ 
-                  position: 'absolute', 
-                  top: '0px', 
-                  right: '0px',
-                  fontSize: '10px'
-                }}>
-                  {matches.length}
-                </IonBadge>
-              )}
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent fullscreen style={{ '--background': 'transparent' }}>
-        <div className="dashboard-container">
-          {/* Zone des cartes Tinder */}
-          <div className="tinder-cards">
-            {profiles.map((profile, index) => (
-              <TinderCard
-                key={profile.id}
-                className="swipe"
-                onSwipe={(dir) => swiped(dir, profile.name, profile.id)}
-                onCardLeftScreen={() => outOfFrame(profile.name)}
-                preventSwipe={['up', 'down']}
-              >
-                <div
-                  style={{ backgroundImage: `url(${profile.images[0]})` }}
-                  className="tinder-card"
-                >
-                  {/* Overlay avec infos */}
-                  <div className="card-overlay">
-                    <div className="card-info">
-                      <h2 className="profile-name">
-                        {profile.name}, <span className="profile-age">{profile.age}</span>
-                      </h2>
-                      <p className="profile-bio">{profile.bio}</p>
-                      <div className="profile-distance">
-                        <IonIcon icon={flash} style={{ marginRight: '5px' }} />
-                        {profile.distance}
-                      </div>
-                      
-                      {/* Intérêts */}
-                      <div className="interests-container">
-                        {profile.interests.map((interest: string, i: number) => (
-                          <IonChip 
-                            key={i}
-                            className="interest-chip"
-                          >
-                            {interest}
-                          </IonChip>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Badge Like/Dislike pendant le swipe */}
-                  <div className={`swipe-indicator like-indicator ${lastDirection === 'right' && index === currentIndex - 1 ? 'visible' : ''}`}>
-                    LIKE
-                  </div>
-                  <div className={`swipe-indicator dislike-indicator ${lastDirection === 'left' && index === currentIndex - 1 ? 'visible' : ''}`}>
-                    NOPE
-                  </div>
-                </div>
-              </TinderCard>
-            ))}
-            
-            {/* Message quand plus de profils */}
-            {currentIndex >= profiles.length && (
-              <div className="no-more-profiles">
-                <IonIcon icon={star} style={{ fontSize: '60px', color: 'white', marginBottom: '20px' }} />
-                <h2 style={{ color: 'white', textAlign: 'center' }}>
-                  Plus de profils pour le moment !
-                </h2>
-                <p style={{ color: 'white', textAlign: 'center', opacity: 0.8 }}>
-                  Revenez plus tard pour découvrir de nouvelles personnes
-                </p>
-              </div>
-            )}
+          <div className="aura-logo">
+            <IonIcon icon={flash} className="logo-icon" />
+            <span>Aura</span>
           </div>
 
-          {/* Boutons d'action */}
-          <div className="action-buttons">
-            <IonButton 
-              className="action-button dislike-button"
-              onClick={() => swipe('left')}
-              disabled={currentIndex >= profiles.length}
-            >
-              <IonIcon icon={close} />
-            </IonButton>
-            
-            <IonButton 
-              className="action-button super-like-button"
-              disabled={currentIndex >= profiles.length}
-            >
-              <IonIcon icon={star} />
-            </IonButton>
-            
-            <IonButton 
-              className="action-button like-button"
-              onClick={() => swipe('right')}
-              disabled={currentIndex >= profiles.length}
-            >
-              <IonIcon icon={heart} />
-            </IonButton>
-          </div>
+          <IonButton
+            fill="clear"
+            color="light"
+            className="logout-button"
+            onClick={handleLogout}
+          >
+            Déconnexion
+          </IonButton>
         </div>
 
-        {/* Fab pour les paramètres */}
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton 
-            size="small" 
-            style={{ 
-              '--background': 'rgba(255, 255, 255, 0.2)',
-              '--color': 'white'
-            }}
-            routerLink="/profile"
+        {/* Container des cartes */}
+        <div className="tinder-container">{renderCards}</div>
+
+        {/* Actions */}
+        <div className="actions">
+          <IonButton 
+            color="light" 
+            onClick={() => swipe("left")} 
+            className="action-button nope"
           >
-            <IonIcon icon={settings} />
-          </IonFabButton>
-        </IonFab>
+            <IonIcon icon={close} />
+          </IonButton>
+          <IonButton 
+            color="light" 
+            onClick={() => swipe("right")} 
+            className="action-button like"
+          >
+            <IonIcon icon={heart} />
+          </IonButton>
+        </div>
       </IonContent>
-    </IonPage>
+
+      <style>{`
+        .dashboard-content {
+          --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 20px;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .aura-logo {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: white;
+          font-size: 24px;
+          font-weight: 700;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .logo-icon {
+          font-size: 28px;
+          color: #fff;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .profile-icon, .logout-button {
+          --color: white;
+          --background-hover: rgba(255, 255, 255, 0.1);
+          font-weight: 500;
+        }
+
+        /* Container des cartes */
+        .tinder-container {
+          position: relative;
+          width: 100%;
+          height: 65vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 20px 0;
+        }
+
+        /* Cartes */
+        .tinder-card {
+          position: absolute;
+          width: 90%;
+          max-width: 400px;
+          height: 500px;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 24px;
+          box-shadow: 
+            0 20px 50px rgba(0, 0, 0, 0.15),
+            0 4px 20px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          overflow: hidden;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: grab;
+        }
+
+        .tinder-card:active {
+          cursor: grabbing;
+        }
+
+        .profile-image {
+          width: 100%;
+          height: 70%;
+          object-fit: cover;
+          border-top-left-radius: 24px;
+          border-top-right-radius: 24px;
+        }
+
+        .profile-info {
+          padding: 20px;
+          color: #2d3748;
+        }
+
+        .profile-info h2 {
+          margin: 0 0 8px 0;
+          font-size: 24px;
+          font-weight: 700;
+          color: #2d3748;
+        }
+
+        .profile-info p {
+          margin: 0 0 12px 0;
+          color: #718096;
+          line-height: 1.4;
+        }
+
+        .distance {
+          color: #667eea;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .interests {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .interest-tag {
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+
+        /* Actions */
+        .actions {
+          display: flex;
+          justify-content: center;
+          gap: 40px;
+          padding: 20px;
+          margin-top: 20px;
+        }
+
+        .action-button {
+          width: 70px;
+          height: 70px;
+          --border-radius: 50%;
+          --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-button:hover {
+          transform: scale(1.1);
+          --box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button.nope {
+          --background: rgba(239, 68, 68, 0.9);
+          --background-hover: rgba(239, 68, 68, 1);
+        }
+
+        .action-button.like {
+          --background: rgba(16, 185, 129, 0.9);
+          --background-hover: rgba(16, 185, 129, 1);
+        }
+
+        /* Cercles d'arrière-plan */
+        .dashboard-content::before {
+          content: '';
+          position: absolute;
+          top: -100px;
+          right: -100px;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+          filter: blur(2px);
+          animation: float-subtle 20s ease-in-out infinite;
+        }
+
+        .dashboard-content::after {
+          content: '';
+          position: absolute;
+          bottom: -60px;
+          left: -60px;
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+          filter: blur(2px);
+          animation: float-subtle 18s ease-in-out infinite reverse;
+        }
+
+        @keyframes float-subtle {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          33% { transform: translate(30px, -20px) rotate(120deg); }
+          66% { transform: translate(-20px, 10px) rotate(240deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .tinder-card {
+            width: 95%;
+            height: 450px;
+          }
+
+          .actions {
+            gap: 30px;
+          }
+
+          .action-button {
+            width: 60px;
+            height: 60px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .top-bar {
+            padding: 12px 16px;
+          }
+
+          .aura-logo {
+            font-size: 20px;
+          }
+
+          .tinder-card {
+            height: 400px;
+          }
+
+          .profile-info {
+            padding: 16px;
+          }
+
+          .profile-info h2 {
+            font-size: 20px;
+          }
+        }
+      `}</style>
+    </IonApp>
   );
 };
 

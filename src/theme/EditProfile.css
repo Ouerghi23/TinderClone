@@ -1,0 +1,45 @@
+.edit-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(180deg, #ffd6ec 0%, #ffeaf5 100%);
+  min-height: 100%;
+  padding: 20px;
+}
+
+.title {
+  margin-top: 40px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ff5fa2;
+}
+
+.profile-form {
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(255, 105, 180, 0.15);
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.preview-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-top: 12px;
+}
+
+.save-button {
+  margin-top: 20px;
+  width: 90%;
+  max-width: 400px;
+  background: linear-gradient(145deg, #ff7eb9, #ff65a3);
+  color: white;
+  font-weight: bold;
+  border-radius: 30px;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
