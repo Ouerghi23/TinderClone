@@ -1,0 +1,178 @@
+.dashboard-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.tinder-cards {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 20px;
+}
+
+.tinder-card {
+  position: absolute;
+  width: 90%;
+  max-width: 400px;
+  height: 70vh;
+  max-height: 600px;
+  background: white;
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 30px 20px 20px;
+  color: white;
+}
+
+.card-info {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.profile-name {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.profile-age {
+  font-weight: normal;
+  opacity: 0.9;
+}
+
+.profile-bio {
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.profile-distance {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 15px;
+}
+
+.interests-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.interest-chip {
+  --background: rgba(255, 255, 255, 0.2);
+  --color: white;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.swipe-indicator {
+  position: absolute;
+  top: 50px;
+  padding: 10px 20px;
+  border: 3px solid;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 24px;
+  opacity: 0;
+  transform: rotate(-30deg);
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+}
+
+.like-indicator {
+  right: 20px;
+  border-color: #4cd964;
+  color: #4cd964;
+}
+
+.dislike-indicator {
+  left: 20px;
+  border-color: #ff3b30;
+  color: #ff3b30;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px 20px;
+}
+
+.action-button {
+  width: 60px;
+  height: 60px;
+  --border-radius: 50%;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dislike-button {
+  --background: white;
+  --color: #ff3b30;
+}
+
+.like-button {
+  --background: linear-gradient(45deg, #fd297b 0%, #ff5864 100%);
+  --color: white;
+}
+
+.super-like-button {
+  --background: #007aff;
+  --color: white;
+}
+
+.no-more-profiles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+/* Animations pour les cartes */
+.swipe {
+  position: absolute;
+}
+
+/* Responsive */
+@media (max-height: 700px) {
+  .tinder-card {
+    height: 65vh;
+  }
+}
+
+@media (max-width: 400px) {
+  .tinder-card {
+    width: 95%;
+    height: 65vh;
+  }
+  
+  .action-buttons {
+    gap: 15px;
+  }
+  
+  .action-button {
+    width: 50px;
+    height: 50px;
+  }
+}
