@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
@@ -10,24 +10,13 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
+import EditProfile from "./pages/EditProfile";
+import ForgotPassword from "./pages/ForgotPassword";
 import LoadingPage from "./pages/LoadingPage";
 
-/* Ionic CSS */
-import "@ionic/react/css/core.css";
-import "@ionic/react/css/normalize.css";
-import "@ionic/react/css/structure.css";
-import "@ionic/react/css/typography.css";
-import "@ionic/react/css/padding.css";
-import "@ionic/react/css/float-elements.css";
-import "@ionic/react/css/text-alignment.css";
-import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
-
-/* Theme variables */
+/* Ionic setup */
 import "./theme/variables.css";
-import EditProfile from "./pages/EditProfile";
-
+import "@ionic/react/css/core.css";
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -43,9 +32,7 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return <LoadingPage />;
-  }
+  if (loading) return <LoadingPage />;
 
   return (
     <IonApp>
@@ -54,36 +41,19 @@ const App: React.FC = () => {
           {/* Routes publiques */}
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/register" component={RegisterPage} />
+          <Route exact path="/forgot-password" component={ForgotPassword} />
 
           {/* Routes protégées */}
-          <Route
-           exact
-           path="/edit-profile"
-           render={() => (user ? <EditProfile /> : <Redirect to="/login" />)}
-/>
-
-          <Route
-            exact
-            path="/dashboard"
-            render={() => (user ? <DashboardPage /> : <Redirect to="/login" />)}
-          />
-          <Route
-            exact
-            path="/profile"
-            render={() => (user ? <ProfilePage /> : <Redirect to="/login" />)}
-          />
-
-          {/* Redirection par défaut */}
-          <Route
-            exact
-            path="/"
-            render={() => <Redirect to={user ? "/dashboard" : "/login"} />}
-          />
-
-          {/* Fallback pour les pages non trouvées */}
-          <Route
-            render={() => <Redirect to={user ? "/dashboard" : "/login"} />}
-          />
+          {user ? (
+            <>
+              <Route exact path="/dashboard" component={DashboardPage} />
+              <Route exact path="/profile" component={ProfilePage} />
+              <Route exact path="/edit-profile" component={EditProfile} />
+              <Redirect exact from="/" to="/dashboard" />
+            </>
+          ) : (
+            <Redirect to="/login" />
+          )}
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>

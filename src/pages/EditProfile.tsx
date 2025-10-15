@@ -1,43 +1,45 @@
 import React, { useState, useEffect } from "react";
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonInput,
   IonButton,
-  IonItem,
-  IonLabel,
-  IonTextarea,
-  IonList,
   IonLoading,
   IonGrid,
   IonRow,
   IonCol,
   IonIcon,
   IonAlert,
-  IonChip,
-  IonText,
 } from "@ionic/react";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { auth } from "../firebaseConfig";
-import { camera, close, add, trash, link } from "ionicons/icons";
-
+import { 
+  camera, 
+  trash, 
+  add, 
+  checkmarkCircle, 
+  arrowBack,
+  location,
+  heart,
+  sparkles
+} from "ionicons/icons";
+import { useIonRouter } from "@ionic/react";
 const EditProfile: React.FC = () => {
   const db = getFirestore();
   const user = auth.currentUser;
+  const router = useIonRouter(); // ✅ hook Ionic
 
   const [name, setName] = useState("");
-  const [age, setAge] = useState<number | undefined>();
+  const [age, setAge] = useState("");
   const [bio, setBio] = useState("");
-  const [interests, setInterests] = useState("");
-  const [location, setLocation] = useState("");
+  const [interests, setInterests] = useState<string[]>([]);
+  const [newInterest, setNewInterest] = useState("");
+  const [userLocation, setUserLocation] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState<"success" | "error">("success");
 
   /* Charger le profil existant */
   useEffect(() => {
@@ -51,13 +53,11 @@ const EditProfile: React.FC = () => {
       if (userSnap.exists()) {
         const data = userSnap.data();
         setName(data.name || "");
-        setAge(data.age || undefined);
+        setAge(data.age?.toString() || "");
         setBio(data.bio || "");
-        setInterests((data.interests || []).join(", "));
-        setLocation(data.location || "");
+        setInterests(data.interests || []);
+        setUserLocation(data.location || "");
         setImages(data.images || []);
-      } else {
-        console.log("Aucun profil trouvé pour cet utilisateur.");
       }
 
       setLoading(false);
@@ -66,60 +66,59 @@ const EditProfile: React.FC = () => {
     fetchProfile();
   }, [user]);
 
-  /* Fonction pour récupérer la localisation */
+  /* Géolocalisation */
   const getUserLocation = async () => {
     if (!navigator.geolocation) {
-      showMessage("La géolocalisation n'est pas supportée par votre navigateur.");
+      showMessage("Géolocalisation non supportée", "error");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const loc = `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
-        setLocation(loc);
+        const loc = `${position.coords.latitude.toFixed(2)}° N, ${position.coords.longitude.toFixed(2)}° E`;
+        setUserLocation(loc);
+        showMessage("Localisation mise à jour !", "success");
       },
       (error) => {
-        showMessage("Erreur de géolocalisation : " + error.message);
+        showMessage("Erreur de géolocalisation", "error");
       }
     );
   };
 
-  /* Ajouter une image par URL */
+  /* Ajouter une image */
   const handleAddImage = () => {
     if (!newImageUrl.trim()) {
-      showMessage("❌ Veuillez entrer une URL d'image");
+      showMessage("Entrez une URL d'image", "error");
       return;
     }
 
-    // Validation basique de l'URL
     if (!newImageUrl.startsWith('http')) {
-      showMessage("❌ URL invalide. Doit commencer par http:// ou https://");
+      showMessage("URL invalide", "error");
       return;
     }
 
     if (images.length >= 6) {
-      showMessage("❌ Maximum 6 images autorisées");
+      showMessage("Maximum 6 photos", "error");
       return;
     }
 
-    // Vérifier si l'image existe déjà
     if (images.includes(newImageUrl)) {
-      showMessage("❌ Cette image est déjà dans votre profil");
+      showMessage("Photo déjà ajoutée", "error");
       return;
     }
 
     setImages(prev => [...prev, newImageUrl.trim()]);
     setNewImageUrl("");
-    showMessage("✅ Image ajoutée avec succès !");
+    showMessage("Photo ajoutée !", "success");
   };
 
   /* Supprimer une image */
   const handleDeleteImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
-    showMessage("✅ Image supprimée");
+    showMessage("Photo supprimée", "success");
   };
 
-  /* Réorganiser les images */
+  /* Réorganiser */
   const moveImage = (fromIndex: number, toIndex: number) => {
     const newImages = [...images];
     const [movedImage] = newImages.splice(fromIndex, 1);
@@ -127,17 +126,43 @@ const EditProfile: React.FC = () => {
     setImages(newImages);
   };
 
-  /* Sauvegarder le profil */
+  /* Ajouter un intérêt */
+  const handleAddInterest = () => {
+    if (!newInterest.trim()) return;
+    if (interests.length >= 10) {
+      showMessage("Maximum 10 intérêts", "error");
+      return;
+    }
+    if (interests.includes(newInterest.trim())) {
+      showMessage("Intérêt déjà ajouté", "error");
+      return;
+    }
+    setInterests(prev => [...prev, newInterest.trim()]);
+    setNewInterest("");
+  };
+
+  /* Supprimer un intérêt */
+  const removeInterest = (index: number) => {
+    setInterests(prev => prev.filter((_, i) => i !== index));
+  };
+
+  /* Sauvegarder */
   const handleSave = async () => {
     if (!user) return;
     
-    if (!name || !age) {
-      showMessage("❌ Le nom et l'âge sont obligatoires");
+    if (!name.trim()) {
+      showMessage("Le nom est obligatoire", "error");
       return;
     }
 
-    if (age < 18 || age > 100) {
-      showMessage("❌ L'âge doit être entre 18 et 100 ans");
+    const ageNum = parseInt(age);
+    if (!age || ageNum < 18 || ageNum > 100) {
+      showMessage("Âge invalide (18-100 ans)", "error");
+      return;
+    }
+
+    if (images.length === 0) {
+      showMessage("Ajoutez au moins une photo", "error");
       return;
     }
 
@@ -146,327 +171,255 @@ const EditProfile: React.FC = () => {
     try {
       const userRef = doc(db, "users", user.uid);
       const newData = {
-        name,
-        age,
-        bio,
-        interests: interests.split(",").map(i => i.trim()).filter(i => i),
-        location,
+        name: name.trim(),
+        age: ageNum,
+        bio: bio.trim(),
+        interests,
+        location: userLocation,
         images,
+        distance: userLocation ? "À proximité" : "Distance inconnue",
         updatedAt: new Date(),
       };
 
       await setDoc(userRef, newData, { merge: true });
-      showMessage("✅ Profil mis à jour avec succès !");
+      showMessage("Profil mis à jour !", "success");
+      setTimeout(() => router.push("/dashboard"), 1500);
       
     } catch (error: any) {
       console.error("Erreur sauvegarde:", error);
-      showMessage("❌ Erreur lors de la sauvegarde");
+      showMessage("Erreur de sauvegarde", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const showMessage = (message: string) => {
+  const showMessage = (message: string, type: "success" | "error") => {
     setAlertMessage(message);
+    setAlertType(type);
     setShowAlert(true);
   };
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar style={{ '--background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-          <IonTitle style={{ color: 'white', fontWeight: '600' }}>
-            Modifier mon profil ✨
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <IonContent className="edit-profile-content">
+        
+        {/* Header */}
+        <div className="profile-header">
+         {/* <button className="back-btn" onClick={() => router.push("/dashboard")}> */}
+          <button className="back-btn" onClick={() => router.push("/dashboard", "back", "pop")}>
 
-      <IonContent className="ion-padding" style={{ '--background': '#f8fafc' }}>
-        <IonList style={{ background: 'transparent' }}>
-          {/* Section Images */}
-          <IonItem style={{ '--background': 'transparent', marginBottom: '20px' }}>
-            <IonLabel>
-              <h2 style={{ fontWeight: '600', color: '#2d3748', marginBottom: '15px' }}>
-                Photos de profil
-              </h2>
-              
-              <div style={{ marginBottom: '15px' }}>
-                <IonChip color="medium">
-                  {images.length}/6 photos
-                </IonChip>
-                <IonText color="medium">
-                  <p style={{ fontSize: '14px', margin: '5px 0 0 0' }}>
-                    Ajoutez des URLs d'images depuis internet
-                  </p>
-                </IonText>
-              </div>
-
-              {/* Ajout d'image par URL */}
-              <div style={{ marginBottom: '20px' }}>
-                <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)' }}>
-                  <IonLabel position="stacked">
-                    <IonIcon icon={link} style={{ marginRight: '8px' }} />
-                    URL de l'image
-                  </IonLabel>
-                  <IonInput
-                    value={newImageUrl}
-                    onIonChange={(e) => setNewImageUrl(e.detail.value!)}
-                    placeholder="https://example.com/image.jpg"
-                    style={{ '--padding-start': '10px' }}
-                  />
-                </IonItem>
-                <IonButton 
-                  expand="block" 
-                  onClick={handleAddImage}
-                  disabled={images.length >= 6}
-                  style={{ 
-                    '--background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    marginTop: '10px'
-                  }}
-                >
-                  <IonIcon icon={add} style={{ marginRight: '8px' }} />
-                  Ajouter l'image
-                </IonButton>
-              </div>
-
-              {/* Grille d'images */}
-              {images.length > 0 && (
-                <div style={{ marginTop: '20px' }}>
-                  <IonText color="medium">
-                    <p style={{ fontSize: '14px', marginBottom: '10px' }}>
-                      Glissez-déposez pour réorganiser (première image = photo principale)
-                    </p>
-                  </IonText>
-                  
-                  <IonGrid>
-                    <IonRow>
-                      {images.map((imageUrl, index) => (
-                        <IonCol size="6" size-md="4" key={index}>
-                          <div 
-                            className="image-container"
-                            style={{
-                              position: 'relative',
-                              borderRadius: '12px',
-                              overflow: 'hidden',
-                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                              background: 'white'
-                            }}
-                          >
-                            <img
-                              src={imageUrl}
-                              alt={`Profile ${index + 1}`}
-                              style={{
-                                width: '100%',
-                                height: '120px',
-                                objectFit: 'cover',
-                                display: 'block'
-                              }}
-                              onError={(e) => {
-                                // En cas d'erreur de chargement
-                                e.currentTarget.style.backgroundColor = '#e2e8f0';
-                                e.currentTarget.alt = 'Image non disponible';
-                              }}
-                            />
-                            
-                            {/* Badge photo principale */}
-                            {index === 0 && (
-                              <div style={{
-                                position: 'absolute',
-                                top: '8px',
-                                left: '8px',
-                                background: 'rgba(102, 126, 234, 0.9)',
-                                color: 'white',
-                                padding: '2px 8px',
-                                borderRadius: '12px',
-                                fontSize: '10px',
-                                fontWeight: '600'
-                              }}>
-                                Principale
-                              </div>
-                            )}
-                            
-                            {/* Bouton suppression */}
-                            <IonButton
-                              fill="clear"
-                              color="danger"
-                              style={{
-                                position: 'absolute',
-                                top: '8px',
-                                right: '8px',
-                                '--padding-start': '4px',
-                                '--padding-end': '4px',
-                                '--background': 'rgba(239, 68, 68, 0.9)',
-                                '--color': 'white'
-                              }}
-                              onClick={() => handleDeleteImage(index)}
-                            >
-                              <IonIcon icon={trash} size="small" />
-                            </IonButton>
-                            
-                            {/* Boutons de réorganisation */}
-                            {images.length > 1 && (
-                              <div style={{
-                                position: 'absolute',
-                                bottom: '8px',
-                                left: '8px',
-                                right: '8px',
-                                display: 'flex',
-                                justifyContent: 'space-between'
-                              }}>
-                                {index > 0 && (
-                                  <IonButton
-                                    fill="clear"
-                                    color="light"
-                                    size="small"
-                                    style={{
-                                      '--padding-start': '4px',
-                                      '--padding-end': '4px',
-                                      '--background': 'rgba(0, 0, 0, 0.6)'
-                                    }}
-                                    onClick={() => moveImage(index, index - 1)}
-                                  >
-                                    ↑
-                                  </IonButton>
-                                )}
-                                {index < images.length - 1 && (
-                                  <IonButton
-                                    fill="clear"
-                                    color="light"
-                                    size="small"
-                                    style={{
-                                      '--padding-start': '4px',
-                                      '--padding-end': '4px',
-                                      '--background': 'rgba(0, 0, 0, 0.6)'
-                                    }}
-                                    onClick={() => moveImage(index, index + 1)}
-                                  >
-                                    ↓
-                                  </IonButton>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </IonCol>
-                      ))}
-                    </IonRow>
-                  </IonGrid>
-                </div>
-              )}
-
-              {/* Message si aucune image */}
-              {images.length === 0 && (
-                <div style={{
-                  textAlign: 'center',
-                  padding: '40px 20px',
-                  background: 'rgba(255, 255, 255, 0.8)',
-                  borderRadius: '12px',
-                  border: '2px dashed #cbd5e0'
-                }}>
-                  <IonIcon 
-                    icon={camera} 
-                    style={{ fontSize: '48px', color: '#cbd5e0', marginBottom: '10px' }} 
-                  />
-                  <IonText color="medium">
-                    <p style={{ margin: 0 }}>Aucune photo ajoutée</p>
-                    <p style={{ fontSize: '14px', margin: '5px 0 0 0' }}>
-                      Ajoutez des URLs d'images pour personnaliser votre profil
-                    </p>
-                  </IonText>
-                </div>
-              )}
-            </IonLabel>
-          </IonItem>
-
-          {/* Informations personnelles */}
-          <IonItem style={{ '--background': 'transparent' }}>
-            <IonLabel>
-              <h2 style={{ fontWeight: '600', color: '#2d3748', marginBottom: '15px' }}>
-                Informations personnelles
-              </h2>
-              
-              <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)', marginBottom: '10px' }}>
-                <IonLabel position="stacked">Nom *</IonLabel>
-                <IonInput
-                  value={name}
-                  onIonChange={(e) => setName(e.detail.value!)}
-                  placeholder="Votre nom"
-                />
-              </IonItem>
-
-              <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)', marginBottom: '10px' }}>
-                <IonLabel position="stacked">Âge *</IonLabel>
-                <IonInput
-                  type="number"
-                  value={age}
-                  onIonChange={(e) => setAge(parseInt(e.detail.value!, 10))}
-                  placeholder="Votre âge"
-                />
-              </IonItem>
-
-              <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)', marginBottom: '10px' }}>
-                <IonLabel position="stacked">Bio</IonLabel>
-                <IonTextarea
-                  value={bio}
-                  onIonChange={(e) => setBio(e.detail.value!)}
-                  placeholder="Parlez-nous de vous..."
-                  rows={3}
-                />
-              </IonItem>
-
-              <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)', marginBottom: '10px' }}>
-                <IonLabel position="stacked">Centres d'intérêt</IonLabel>
-                <IonInput
-                  value={interests}
-                  onIonChange={(e) => setInterests(e.detail.value!)}
-                  placeholder="Voyage, Musique, Sport..."
-                />
-              </IonItem>
-
-              <IonItem style={{ '--background': 'rgba(255, 255, 255, 0.8)' }}>
-                <IonLabel position="stacked">Localisation</IonLabel>
-                <IonInput 
-                  value={location} 
-                  readonly 
-                  placeholder="Appuyez pour autoriser la géolocalisation" 
-                />
-                <IonButton 
-                  slot="end" 
-                  onClick={getUserLocation}
-                  style={{ '--background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                >
-                  📍 Localiser
-                </IonButton>
-              </IonItem>
-            </IonLabel>
-          </IonItem>
-        </IonList>
-
-        {/* Bouton de sauvegarde */}
-        <div style={{ padding: '20px' }}>
-          <IonButton 
-            expand="block" 
-            onClick={handleSave}
-            disabled={loading}
-            style={{ 
-              '--background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              '--border-radius': '12px',
-              height: '50px',
-              fontWeight: '600'
-            }}
-          >
-            {loading ? "Sauvegarde..." : "💾 Sauvegarder le profil"}
-          </IonButton>
+            <IonIcon icon={arrowBack} />
+          </button>
+          <h1 className="header-title">Modifier le profil</h1>
+          <div style={{ width: '40px' }}></div>
         </div>
 
-        <IonLoading isOpen={loading} message="Sauvegarde en cours..." />
+        <div className="content-wrapper">
+          
+          {/* Section Photos */}
+          <div className="section">
+            <div className="section-header">
+              <IonIcon icon={camera} className="section-icon" />
+              <h2 className="section-title">Mes photos</h2>
+              <span className="photo-count">{images.length}/6</span>
+            </div>
+
+            {/* Ajouter photo */}
+            <div className="add-photo-container">
+              <input
+                type="text"
+                className="photo-input"
+                placeholder="https://example.com/photo.jpg"
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddImage()}
+              />
+              <button 
+                className="add-photo-btn"
+                onClick={handleAddImage}
+                disabled={images.length >= 6}
+              >
+                <IonIcon icon={add} />
+              </button>
+            </div>
+
+            {/* Grille photos */}
+            {images.length > 0 ? (
+              <div className="photos-grid">
+                {images.map((imageUrl, index) => (
+                  <div key={index} className="photo-item">
+                    <img src={imageUrl} alt={`Photo ${index + 1}`} />
+                    {index === 0 && <div className="main-badge">Principale</div>}
+                    <button 
+                      className="delete-photo-btn"
+                      onClick={() => handleDeleteImage(index)}
+                    >
+                      <IonIcon icon={trash} />
+                    </button>
+                    <div className="photo-controls">
+                      {index > 0 && (
+                        <button 
+                          className="move-btn"
+                          onClick={() => moveImage(index, index - 1)}
+                        >
+                          ←
+                        </button>
+                      )}
+                      {index < images.length - 1 && (
+                        <button 
+                          className="move-btn"
+                          onClick={() => moveImage(index, index + 1)}
+                        >
+                          →
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-photos">
+                <IonIcon icon={camera} className="empty-icon" />
+                <p>Aucune photo</p>
+                <span>Ajoutez des URLs d'images</span>
+              </div>
+            )}
+          </div>
+
+          {/* Section Infos */}
+          <div className="section">
+            <div className="section-header">
+              <IonIcon icon={heart} className="section-icon" />
+              <h2 className="section-title">Informations</h2>
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Prénom *</label>
+              <input
+                type="text"
+                className="text-input"
+                placeholder="Votre prénom"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={30}
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Âge *</label>
+              <input
+                type="number"
+                className="text-input"
+                placeholder="18"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                min={18}
+                max={100}
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Bio</label>
+              <textarea
+                className="text-area"
+                placeholder="Parlez de vous en quelques mots..."
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                maxLength={500}
+                rows={4}
+              />
+              <span className="char-count">{bio.length}/500</span>
+            </div>
+
+            <div className="input-group">
+              <label className="input-label">Localisation</label>
+              <div className="location-container">
+                <input
+                  type="text"
+                  className="text-input"
+                  placeholder="Autoriser la localisation"
+                  value={userLocation}
+                  readOnly
+                />
+                <button className="location-btn" onClick={getUserLocation}>
+                  <IonIcon icon={location} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Section Intérêts */}
+          <div className="section">
+            <div className="section-header">
+              <IonIcon icon={sparkles} className="section-icon" />
+              <h2 className="section-title">Centres d'intérêt</h2>
+              <span className="photo-count">{interests.length}/10</span>
+            </div>
+
+            <div className="add-photo-container">
+              <input
+                type="text"
+                className="photo-input"
+                placeholder="Ex: Voyage, Musique..."
+                value={newInterest}
+                onChange={(e) => setNewInterest(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddInterest()}
+                maxLength={20}
+              />
+              <button 
+                className="add-photo-btn"
+                onClick={handleAddInterest}
+                disabled={interests.length >= 10}
+              >
+                <IonIcon icon={add} />
+              </button>
+            </div>
+
+            {interests.length > 0 && (
+              <div className="interests-container">
+                {interests.map((interest, index) => (
+                  <div key={index} className="interest-chip">
+                    <span>{interest}</span>
+                    <button 
+                      className="remove-interest"
+                      onClick={() => removeInterest(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bouton Save */}
+          <button 
+            className="save-btn"
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? "Sauvegarde..." : "Enregistrer les modifications"}
+          </button>
+
+        </div>
+
+        <IonLoading 
+          isOpen={loading} 
+          message="Sauvegarde en cours..." 
+          cssClass="custom-loader"
+        />
 
         <IonAlert
           isOpen={showAlert}
           onDidDismiss={() => setShowAlert(false)}
+          header={alertType === "success" ? "✅ Succès" : "❌ Erreur"}
           message={alertMessage}
           buttons={['OK']}
+          cssClass={`custom-alert ${alertType}`}
         />
       </IonContent>
+
+
     </IonPage>
   );
 };

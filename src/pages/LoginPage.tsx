@@ -1,47 +1,33 @@
 import React, { useState } from "react";
+import { useHistory } from 'react-router-dom'; // ← Changé ici
 import { 
   IonPage, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
   IonContent, 
-  IonInput, 
-  IonButton, 
-  IonItem, 
-  IonLabel,
   IonLoading,
   IonGrid,
   IonRow,
   IonCol,
   IonIcon
 } from "@ionic/react";
-import { mail, lockClosed, heart, sparkles } from "ionicons/icons"; // Utilisé heart et sparkles pour la cohérence
+import { mail, lockClosed, flameSharp } from "ionicons/icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { useHistory } from "react-router-dom";
-
-// Définition des couleurs du thème rosé (identiques à la page Register)
-const PRIMARY_ROSE = "#E91E63"; // Rose framboise
-const LIGHT_ROSE = "#FFC0CB"; // Rose clair
-const GRADIENT_START = "#f093fb"; // Rose pastel
-const GRADIENT_END = "#f5576c"; // Corail
-const TEXT_COLOR = "#4A4A4A"; // Gris foncé
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const history = useHistory();
+  const history = useHistory(); // ← Changé ici
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setMessage("❌ Veuillez remplir tous les champs");
+      setMessage("Tous les champs sont requis");
       return;
     }
 
     if (!email.includes("@")) {
-      setMessage("❌ Format d'email invalide");
+      setMessage("Format d'email invalide");
       return;
     }
 
@@ -50,23 +36,24 @@ const LoginPage: React.FC = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setMessage("✅ Connexion réussie !");
       setTimeout(() => {
-        history.push("/dashboard");
-      }, 1000);
+        history.push("/dashboard"); // ← Changé ici
+      }, 500);
     } catch (error: any) {
       console.error("Erreur de connexion:", error);
       
       if (error.code === "auth/invalid-email") {
-        setMessage("❌ Adresse email invalide");
+        setMessage("Adresse email invalide");
       } else if (error.code === "auth/user-not-found") {
-        setMessage("❌ Aucun utilisateur trouvé avec cet email");
+        setMessage("Aucun compte trouvé avec cet email");
       } else if (error.code === "auth/wrong-password") {
-        setMessage("❌ Mot de passe incorrect");
+        setMessage("Email ou mot de passe incorrect");
       } else if (error.code === "auth/too-many-requests") {
-        setMessage("❌ Trop de tentatives. Veuillez réessayer plus tard");
+        setMessage("Trop de tentatives. Réessayez plus tard");
+      } else if (error.code === "auth/invalid-credential") {
+        setMessage("Email ou mot de passe incorrect");
       } else {
-        setMessage("❌ Erreur de connexion: " + error.message);
+        setMessage("Erreur de connexion. Veuillez réessayer");
       }
     } finally {
       setLoading(false);
@@ -80,135 +67,128 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <IonPage style={{
-      background: `linear-gradient(135deg, ${GRADIENT_START} 0%, ${GRADIENT_END} 100%)` // Dégradé rosé
-    }}>
-      <IonHeader translucent className="ion-no-border" style={{ background: 'transparent' }}>
-        <IonToolbar style={{ '--background': 'transparent', '--color': 'white' }}>
-          <IonTitle style={{ 
-            textAlign: 'center', 
-            fontSize: '26px', 
-            fontWeight: '700',
-            letterSpacing: '-0.3px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-          }}>
-            <IonIcon icon={heart} style={{ 
-              marginRight: '8px',
-              color: '#ffffff',
-              fontSize: '28px',
-              opacity: 0.95
-            }} />
-            Aura
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      
-      <IonContent fullscreen className="ion-padding" style={{
-        '--background': 'transparent'
-      }}>
+    <IonPage>
+      <IonContent fullscreen className="login-content">
         
-        {/* Cercles d'arrière-plan (pour l'effet de flou) */}
-        <div className="background-circles">
-          <div className="circle circle-1"></div>
-          <div className="circle circle-2"></div>
-          <div className="circle circle-3"></div>
-        </div>
-
-        {/* Grille responsive et centrée */}
-        <IonGrid className="login-grid">
-          <IonRow className="ion-justify-content-center ion-align-items-center">
-            <IonCol size="12" size-md="8" size-lg="6" className="ion-align-self-center">
+        {/* Background Gradient */}
+        <div className="gradient-bg"></div>
+        
+        <IonGrid className="main-grid">
+          <IonRow className="ion-justify-content-center ion-align-items-center full-height">
+            <IonCol size="12" sizeMd="8" sizeLg="5" sizeXl="4">
               
-              {/* Header de la page */}
-              <div className="login-header-content fade-in-up">
-                <div className="icon-wrapper">
-                  <IonIcon 
-                    icon={heart} 
-                    className="main-icon"
+              {/* Logo Header */}
+              <div className="logo-header">
+                <div className="flame-container">
+                  <IonIcon icon={flameSharp} className="flame-logo" />
+                </div>
+                <h1 className="app-name">Aura</h1>
+              </div>
+
+              {/* Main Title */}
+              <div className="main-title-section">
+                <h2 className="login-title">Bon retour !</h2>
+                <p className="login-subtitle">Connectez-vous pour continuer votre aventure</p>
+              </div>
+
+              {/* Form Container */}
+              <div className="form-wrapper">
+                
+                {/* Email Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={mail} />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={loading}
+                    className="custom-text-input"
                   />
                 </div>
-                <h1 className="main-title">
-                  Heureux de vous revoir
-                </h1>
-                <p className="subtitle">
-                  Entrez vos identifiants pour vous reconnecter
-                </p>
-              </div>
 
-              {/* Formulaire (Carte vitrée) */}
-              <div className="form-container scale-in">
-                
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={mail} className="input-icon" />
-                      Email
-                    </IonLabel>
-                    <IonInput 
-                      type="email" 
-                      value={email} 
-                      onIonChange={(e) => setEmail(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                    />
-                  </IonItem>
-                </div>
-                
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={lockClosed} className="input-icon" />
-                      Mot de passe
-                    </IonLabel>
-                    <IonInput 
-                      type="password" 
-                      value={password} 
-                      onIonChange={(e) => setPassword(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                    />
-                  </IonItem>
-                </div>
-                
-                <IonButton 
-                  expand="block" 
-                  onClick={handleLogin} 
-                  disabled={loading}
-                  className="login-button"
-                >
-                  <span className="button-text">
-                    {loading ? "Connexion..." : "Se connecter 💖"}
-                  </span>
-                </IonButton>
-
-                {/* Lien vers inscription */}
-                <div className="register-link-container">
-                  <IonButton 
-                    fill="clear" 
-                    onClick={() => history.push("/register")}
+                {/* Password Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={lockClosed} />
+                  </div>
+                  <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     disabled={loading}
-                    className="register-link-button"
-                  >
-                    Pas de compte ? <strong>Créer un compte</strong>
-                  </IonButton>
+                    className="custom-text-input"
+                  />
                 </div>
 
-                {/* Message d'erreur/succès */}
+                {/* Forgot Password Link */}
+                <div className="forgot-password">
+                  <button 
+                    onClick={() => history.push("/forgot-password")} // ← Changé ici
+                    className="forgot-btn"
+                    disabled={loading}
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </div>
+
+                {/* Error Message */}
                 {message && (
-                  <div className={`message-box ${message.includes("✅") ? "success" : "error"}`}>
-                    {message}
+                  <div className="error-banner">
+                    <span>{message}</span>
                   </div>
                 )}
+
+                {/* Login Button */}
+                <button 
+                  onClick={handleLogin} 
+                  disabled={loading}
+                  className="login-btn"
+                >
+                  {loading ? "Connexion..." : "SE CONNECTER"}
+                </button>
+
+                {/* Divider */}
+                <div className="divider">
+                  <span>OU</span>
+                </div>
+
+                {/* Social Login Buttons */}
+                <button className="social-btn google-btn" disabled={loading}>
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
+                  Continuer avec Google
+                </button>
+
+                <button className="social-btn apple-btn" disabled={loading}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                  </svg>
+                  Continuer avec Apple
+                </button>
               </div>
 
-              {/* Footer */}
-              <div className="login-footer fade-in-up-delay">
-                <p>
-                  En vous connectant, vous acceptez nos <strong>Conditions d'utilisation</strong>
-                </p>
+              {/* Register Link */}
+              <div className="register-redirect">
+                <p>Nouveau sur Aura ?</p>
+                <button 
+                  onClick={() => history.push("/register")} // ← Changé ici
+                  disabled={loading}
+                  className="register-link-btn"
+                >
+                  CRÉER UN COMPTE
+                </button>
               </div>
+
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -217,288 +197,535 @@ const LoginPage: React.FC = () => {
           isOpen={loading} 
           message="Connexion en cours..." 
           spinner="crescent"
-          cssClass="custom-loading"
+          cssClass="custom-loader"
         />
       </IonContent>
 
       <style>{`
-        /* ---------------------------------------------------- */
-        /* STYLES GÉNÉRAUX ET THÈME ROSÉ */
-        /* ---------------------------------------------------- */
+        /* ====================================== */
+        /*        TINDER LOGIN - MODERN DESIGN    */
+        /* ====================================== */
 
-        .login-grid {
-            /* Retirer les styles de hauteur fixe pour permettre le défilement */
-            height: auto; 
+        * {
+          -webkit-tap-highlight-color: transparent;
         }
 
-        .ion-align-items-center {
-            /* Assure le centrage vertical uniquement s'il y a de l'espace, sinon permet le scroll */
-            min-height: 100%;
+        .login-content {
+          --background: #FFFFFF;
         }
 
-        .login-header-content {
+        /* Background Gradient */
+        .gradient-bg {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 45vh;
+          background: linear-gradient(180deg, #FF6B9D 0%, #FE3C72 50%, #E8325F 100%);
+          z-index: 0;
+        }
+
+        .main-grid {
+          position: relative;
+          z-index: 1;
+          height: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
+        .full-height {
+          min-height: 100vh;
+          padding: 20px 16px;
+        }
+
+        /* Logo Header */
+        .logo-header {
           text-align: center;
-          margin-bottom: 40px;
-          color: white;
+          margin-bottom: 32px;
+          animation: fadeInDown 0.8s ease-out;
         }
 
-        .icon-wrapper {
-          margin-bottom: 16px;
+        .flame-container {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 80px;
+          height: 80px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          backdrop-filter: blur(10px);
+          margin-bottom: 12px;
+          animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .main-icon {
-          font-size: 56px;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-          opacity: 0.95;
-          color: ${LIGHT_ROSE}; /* Couleur claire pour l'icône sur fond foncé */
+        .flame-logo {
+          font-size: 48px;
+          color: #FFFFFF;
+          filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+          animation: flicker 2s ease-in-out infinite;
         }
 
-        .main-title {
+        @keyframes flicker {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.85; transform: scale(1.05); }
+        }
+
+        .app-name {
+          font-size: 42px;
+          font-weight: 800;
+          color: #FFFFFF;
+          margin: 0;
+          letter-spacing: -1px;
+          text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Main Title Section */
+        .main-title-section {
+          text-align: center;
+          margin-bottom: 32px;
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .login-title {
           font-size: 32px;
           font-weight: 700;
-          margin: 0 0 12px 0;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          color: #FFFFFF;
+          margin: 0 0 8px 0;
           letter-spacing: -0.5px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          opacity: 0.95;
         }
 
-        .subtitle {
+        .login-subtitle {
           font-size: 16px;
-          opacity: 0.85;
+          color: rgba(255, 255, 255, 0.9);
           margin: 0;
-          font-weight: 400;
-          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          letter-spacing: 0.1px;
           line-height: 1.5;
+          font-weight: 400;
+          padding: 0 20px;
         }
 
-        .form-container {
-          background: rgba(255, 255, 255, 0.95); /* Effet vitré */
+        /* Form Wrapper */
+        .form-wrapper {
+          background: #FFFFFF;
           border-radius: 24px;
-          padding: 40px 32px;
-          box-shadow: 0 16px 50px rgba(0, 0, 0, 0.1),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(15px) saturate(180%);
-          border: 1px solid rgba(255, 255, 255, 0.7);
-          margin-bottom: 20px;
+          padding: 32px 24px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          animation: slideUp 0.8s ease-out 0.3s both;
         }
 
-        .input-wrapper {
-          margin-bottom: 20px;
+        /* Input Fields */
+        .input-field {
           position: relative;
-        }
-        
-        /* Styles des champs de saisie (Item/Label/Input) */
-        .custom-item {
-          --background: rgba(255, 250, 250, 0.8);
-          --border-radius: 14px;
-          --padding-start: 16px;
-          --padding-end: 16px;
-          --inner-padding-end: 12px;
-          --min-height: 56px;
-          border: 1.2px solid #ffe4e6; 
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          margin: 0;
-          backdrop-filter: blur(10px);
-        }
-
-        .custom-item:hover {
-          border-color: ${PRIMARY_ROSE}40;
-          --background: rgba(255, 255, 255, 0.95);
-        }
-
-        .custom-label {
-          color: ${TEXT_COLOR} !important;
-          font-weight: 500;
-          font-size: 14px;
+          margin-bottom: 16px;
           display: flex;
           align-items: center;
-          gap: 6px;
-          letter-spacing: 0.1px;
+          background: #F6F6F6;
+          border-radius: 16px;
+          padding: 0 16px;
+          height: 60px;
+          transition: all 0.3s ease;
+          border: 2px solid transparent;
+        }
+
+        .input-field:focus-within {
+          background: #FFFFFF;
+          border-color: #FE3C72;
+          box-shadow: 0 0 0 4px rgba(254, 60, 114, 0.1);
         }
 
         .input-icon {
-          font-size: 16px;
-          opacity: 0.7;
-          color: ${PRIMARY_ROSE};
+          flex-shrink: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+          color: #8E8E93;
+          font-size: 20px;
         }
 
-        .custom-input {
-          --color: ${TEXT_COLOR};
-          --padding-start: 0;
-          --padding-top: 18px;
+        .input-field:focus-within .input-icon {
+          color: #FE3C72;
+        }
+
+        .custom-text-input {
+          flex: 1;
+          border: none;
+          background: transparent;
           font-size: 16px;
           font-weight: 500;
-          letter-spacing: 0.1px;
+          color: #1C1C1E;
+          outline: none;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* Bouton de connexion */
-        .login-button {
-          --background: linear-gradient(135deg, ${PRIMARY_ROSE} 0%, ${GRADIENT_END} 100%);
-          --background-hover: linear-gradient(135deg, #c41852 0%, #d44d5c 100%);
-          --border-radius: 14px;
-          --box-shadow: 0 8px 30px rgba(233, 30, 99, 0.2);
-          height: 56px; /* Taille cohérente avec le bouton de la page Register */
-          font-size: 16px;
-          font-weight: 600;
-          margin-bottom: 16px;
-          letter-spacing: 0.2px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .login-button:hover {
-          transform: translateY(-2px);
-          --box-shadow: 0 12px 40px rgba(233, 30, 99, 0.3);
-        }
-
-        /* Lien d'inscription */
-        .register-link-container {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-
-        .register-link-button {
-          --color: ${TEXT_COLOR}a0;
-          font-size: 14px;
-          font-weight: 500;
-          text-transform: none;
-          letter-spacing: 0.1px;
-        }
-
-        .register-link-button:hover {
-          --color: ${PRIMARY_ROSE};
-        }
-
-        .register-link-button strong {
-          font-weight: 600;
-          color: ${PRIMARY_ROSE};
-        }
-        
-        /* Message d'erreur/succès */
-        .message-box {
-          text-align: center;
-          margin-top: 20px;
-          padding: 14px 16px;
-          border-radius: 12px;
-          font-weight: 500;
-          font-size: 14px;
-          animation: message-slide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          letter-spacing: 0.1px;
-          line-height: 1.4;
-        }
-
-        .message-box.success {
-          background: rgba(255, 240, 245, 0.9);
-          color: #c084fc;
-          border: 1px solid rgba(233, 30, 99, 0.2); 
-        }
-
-        .message-box.error {
-          background: rgba(254, 242, 242, 0.9);
-          color: #991b1b;
-          border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        /* Footer */
-        .login-footer {
-          text-align: center;
-          margin-top: 32px;
-          color: white;
-          opacity: 0.8;
-        }
-
-        .login-footer p {
-          font-size: 12px;
-          margin: 0;
-          line-height: 1.6;
-          letter-spacing: 0.1px;
+        .custom-text-input::placeholder {
+          color: #8E8E93;
           font-weight: 400;
         }
 
-        .login-footer strong {
+        .custom-text-input:disabled {
+          opacity: 0.5;
+        }
+
+        /* Forgot Password */
+        .forgot-password {
+          text-align: right;
+          margin-bottom: 20px;
+        }
+
+        .forgot-btn {
+          background: transparent;
+          border: none;
+          color: #FE3C72;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          padding: 8px 0;
+          transition: opacity 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .forgot-btn:hover:not(:disabled) {
+          opacity: 0.7;
+        }
+
+        .forgot-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        /* Error Banner */
+        .error-banner {
+          background: #FFF5F5;
+          color: #E53E3E;
+          padding: 14px 16px;
+          border-radius: 12px;
+          margin-bottom: 16px;
+          font-size: 14px;
           font-weight: 500;
-          opacity: 0.95;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border-left: 4px solid #E53E3E;
+          animation: shake 0.5s ease;
         }
-        
-        /* ---------------------------------------------------- */
-        /* ANIMATIONS ET CERCLES D'ARRIÈRE-PLAN */
-        /* (Repris de la page Register pour la cohérence) */
-        /* ---------------------------------------------------- */
-        .background-circles {
-          position: absolute;
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
+        }
+
+        /* Login Button */
+        .login-btn {
           width: 100%;
-          height: 100%;
-          overflow: hidden;
-          z-index: 0;
-          opacity: 0.4;
+          height: 60px;
+          background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+          border: none;
+          border-radius: 30px;
+          color: #FFFFFF;
+          font-size: 16px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          margin-bottom: 24px;
+          box-shadow: 0 8px 24px rgba(254, 60, 114, 0.4);
+          transition: all 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .circle {
-          position: absolute;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-          filter: blur(1.5px);
+        .login-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 32px rgba(254, 60, 114, 0.5);
         }
 
-        .circle-1 {
-          width: 320px;
-          height: 320px;
-          top: -100px;
-          right: -100px;
-          animation: float-subtle 20s ease-in-out infinite;
+        .login-btn:active:not(:disabled) {
+          transform: translateY(0);
         }
 
-        .circle-2 {
-          width: 200px;
-          height: 200px;
-          bottom: -60px;
-          left: -60px;
-          animation: float-subtle 18s ease-in-out infinite reverse;
-          animation-delay: 3s;
+        .login-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
         }
 
-        .circle-3 {
-          width: 140px;
-          height: 140px;
-          top: 30%;
-          left: 70%;
-          animation: float-subtle 15s ease-in-out infinite;
-          animation-delay: 6s;
+        /* Divider */
+        .divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 24px 0;
+          color: #8E8E93;
+          font-size: 13px;
+          font-weight: 600;
         }
 
-        @keyframes float-subtle {
-          0%, 100% { transform: translate(0, 0) rotate(0deg); }
-          33% { transform: translate(30px, -20px) rotate(120deg); }
-          66% { transform: translate(-20px, 10px) rotate(240deg); }
+        .divider::before,
+        .divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid #E5E5EA;
         }
 
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+        .divider span {
+          padding: 0 16px;
         }
 
-        @keyframes scale-in {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes message-slide {
-          from { opacity: 0; transform: translateY(-10px) scale(0.95); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
+        /* Social Buttons */
+        .social-btn {
+          width: 100%;
+          height: 56px;
+          border-radius: 28px;
+          border: 2px solid #E5E5EA;
+          background: #FFFFFF;
+          color: #1C1C1E;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          transition: all 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
+        .social-btn:hover:not(:disabled) {
+          background: #F6F6F6;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
 
-        .fade-in-up { animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .fade-in-up-delay { animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards; }
-        .scale-in { animation: scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s backwards; }
-        
-        .custom-loading {
-          --background: rgba(0, 0, 0, 0.65);
-          --spinner-color: ${PRIMARY_ROSE};
-          backdrop-filter: blur(4px);
+        .social-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .apple-btn {
+          background: #000000;
+          color: #FFFFFF;
+          border-color: #000000;
+        }
+
+        .apple-btn:hover:not(:disabled) {
+          background: #1C1C1E;
+        }
+
+        /* Register Redirect */
+        .register-redirect {
+          text-align: center;
+          margin-top: 24px;
+          animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .register-redirect p {
+          font-size: 15px;
+          color: #FFFFFF;
+          margin: 0 0 12px 0;
+          font-weight: 500;
+        }
+
+        .register-link-btn {
+          background: transparent;
+          border: 2px solid #FFFFFF;
+          color: #FFFFFF;
+          padding: 14px 40px;
+          border-radius: 30px;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .register-link-btn:hover:not(:disabled) {
+          background: #FFFFFF;
+          color: #FE3C72;
+          transform: scale(1.05);
+        }
+
+        .register-link-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        /* Custom Loader */
+        .custom-loader {
+          --background: rgba(0, 0, 0, 0.85);
+          --spinner-color: #FE3C72;
+          backdrop-filter: blur(10px);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.5);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        /* ====================================== */
+        /*            RESPONSIVE DESIGN           */
+        /* ====================================== */
+
+        @media (max-width: 576px) {
+          .full-height {
+            padding: 16px 12px;
+          }
+
+          .flame-container {
+            width: 70px;
+            height: 70px;
+          }
+
+          .flame-logo {
+            font-size: 42px;
+          }
+
+          .app-name {
+            font-size: 36px;
+          }
+
+          .login-title {
+            font-size: 28px;
+          }
+
+          .login-subtitle {
+            font-size: 15px;
+          }
+
+          .form-wrapper {
+            padding: 28px 20px;
+          }
+
+          .input-field {
+            height: 56px;
+          }
+
+          .login-btn {
+            height: 56px;
+            font-size: 15px;
+          }
+
+          .social-btn {
+            height: 52px;
+            font-size: 14px;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .gradient-bg {
+            height: 50vh;
+          }
+
+          .full-height {
+            padding: 40px 24px;
+          }
+
+          .form-wrapper {
+            padding: 40px 32px;
+          }
+
+          .main-title-section {
+            margin-bottom: 40px;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .form-wrapper {
+            padding: 48px 40px;
+          }
+
+          .input-field {
+            height: 64px;
+          }
+
+          .login-btn {
+            height: 64px;
+            font-size: 17px;
+          }
+
+          .social-btn {
+            height: 58px;
+          }
+        }
+
+        @media (max-height: 700px) {
+          .logo-header {
+            margin-bottom: 24px;
+          }
+
+          .main-title-section {
+            margin-bottom: 24px;
+          }
+
+          .flame-container {
+            width: 60px;
+            height: 60px;
+          }
+
+          .flame-logo {
+            font-size: 36px;
+          }
+
+          .app-name {
+            font-size: 32px;
+          }
+        }
+
+        @media (min-width: 768px) and (max-height: 800px) {
+          .full-height {
+            padding: 32px 24px;
+          }
         }
       `}</style>
     </IonPage>

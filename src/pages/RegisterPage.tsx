@@ -7,8 +7,6 @@ import {
   IonContent, 
   IonInput, 
   IonButton, 
-  IonItem, 
-  IonLabel,
   IonLoading,
   IonGrid,
   IonRow,
@@ -16,17 +14,10 @@ import {
   IonAlert,
   IonIcon
 } from "@ionic/react";
-import { person, mail, lockClosed, heart, sparkles } from "ionicons/icons"; // Ajout de 'heart' pour la touche douce
+import { person, mail, lockClosed, flameSharp, checkmarkCircle } from "ionicons/icons";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { useHistory } from "react-router-dom";
-
-// Définition des couleurs du thème rosé
-const PRIMARY_ROSE = "#E91E63"; // Rose framboise
-const LIGHT_ROSE = "#FFC0CB"; // Rose clair
-const GRADIENT_START = "#f093fb"; // Rose pastel
-const GRADIENT_END = "#f5576c"; // Corail
-const TEXT_COLOR = "#4A4A4A"; // Gris foncé
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -40,22 +31,22 @@ const RegisterPage: React.FC = () => {
 
   const validateForm = (): boolean => {
     if (!email || !password || !confirmPassword) {
-      setMessage("❌ Veuillez remplir tous les champs");
+      setMessage("Tous les champs sont requis");
       return false;
     }
 
     if (!email.includes("@") || !email.includes(".")) {
-      setMessage("❌ Format d'email invalide");
+      setMessage("Format d'email invalide");
       return false;
     }
 
     if (password.length < 6) {
-      setMessage("❌ Le mot de passe doit contenir au moins 6 caractères");
+      setMessage("Le mot de passe doit contenir au moins 6 caractères");
       return false;
     }
 
     if (password !== confirmPassword) {
-      setMessage("❌ Les mots de passe ne correspondent pas");
+      setMessage("Les mots de passe ne correspondent pas");
       return false;
     }
 
@@ -83,15 +74,15 @@ const RegisterPage: React.FC = () => {
       console.error("Erreur d'inscription:", error);
       
       if (error.code === "auth/email-already-in-use") {
-        setMessage("❌ Cet email est déjà utilisé");
+        setMessage("Cet email est déjà utilisé");
       } else if (error.code === "auth/invalid-email") {
-        setMessage("❌ Adresse email invalide");
+        setMessage("Adresse email invalide");
       } else if (error.code === "auth/weak-password") {
-        setMessage("❌ Le mot de passe est trop faible");
+        setMessage("Le mot de passe est trop faible");
       } else if (error.code === "auth/operation-not-allowed") {
-        setMessage("❌ L'inscription par email/mot de passe n'est pas activée");
+        setMessage("L'inscription par email/mot de passe n'est pas activée");
       } else {
-        setMessage("❌ Erreur lors de l'inscription: " + error.message);
+        setMessage("Erreur lors de l'inscription: " + error.message);
       }
     } finally {
       setLoading(false);
@@ -110,173 +101,131 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <IonPage style={{
-      background: `linear-gradient(135deg, ${GRADIENT_START} 0%, ${GRADIENT_END} 100%)` // Dégradé rosé
-    }}>
-      <IonHeader translucent style={{ background: 'transparent' }}>
-        <IonToolbar style={{ '--background': 'transparent', '--color': 'white' }}>
-          <IonTitle style={{ 
-            textAlign: 'center', 
-            fontSize: '26px', 
-            fontWeight: '700',
-            letterSpacing: '-0.3px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-          }}>
-            <IonIcon icon={heart} style={{ // Icône coeur pour le thème rose
-              marginRight: '8px',
-              color: '#ffffff',
-              fontSize: '28px',
-              opacity: 0.95
-            }} />
-            Aura
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      
-      <IonContent fullscreen className="ion-padding" style={{
-        '--background': 'transparent'
-      }}>
-        {/* Cercles d'arrière-plan */}
-        <div className="background-circles">
-          <div className="circle circle-1"></div>
-          <div className="circle circle-2"></div>
-          <div className="circle circle-3"></div>
-        </div>
+    <IonPage>
+      <IonContent fullscreen className="register-content">
+        
+        {/* Background Gradient */}
+        <div className="gradient-bg"></div>
+        
+        <IonGrid className="main-grid">
+          <IonRow className="ion-justify-content-center ion-align-items-center full-height">
+            <IonCol size="12" sizeMd="8" sizeLg="5" sizeXl="4">
+              
+              {/* Logo Header */}
+              <div className="logo-header">
+                <div className="flame-container">
+                  <IonIcon icon={flameSharp} className="flame-logo" />
+                </div>
+                <h1 className="app-name">Aura</h1>
+              </div>
 
-      <IonGrid>
-        <IonRow className="ion-justify-content-center">
-          <IonCol size="12" size-md="8" size-lg="6" className="ion-align-self-center">
+              {/* Main Title */}
+              <div className="main-title-section">
+                <h2 className="signup-title">Créer un compte</h2>
+                <p className="signup-subtitle">Rejoignez des milliers de personnes qui trouvent l'amour sur Aura</p>
+              </div>
 
-              {/* Header avec icône */}
-              <div className="register-header-content fade-in-up">
-                <div className="icon-wrapper">
-                  <IonIcon 
-                    icon={heart} // Icône coeur
-                    className="main-icon"
+              {/* Form Container */}
+              <div className="form-wrapper">
+                
+                {/* Name Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={person} />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Prénom"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={loading}
+                    className="custom-text-input"
                   />
                 </div>
-                <h1 className="main-title">
-                  Rejoignez Aura
-                </h1>
-                <p className="subtitle">
-                  Créez votre compte pour découvrir des connexions authentiques
-                </p>
-              </div>
 
-              {/* Formulaire */}
-              <div className="form-container scale-in">
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={person} className="input-icon" />
-                      Nom d'affichage
-                    </IonLabel>
-                    <IonInput 
-                      type="text" 
-                      value={displayName} 
-                      onIonChange={(e) => setDisplayName(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                      placeholder="Comment voulez-vous qu'on vous appelle ?"
-                    />
-                  </IonItem>
-                </div>
-                
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={mail} className="input-icon" />
-                      Email *
-                    </IonLabel>
-                    <IonInput 
-                      type="email" 
-                      value={email} 
-                      onIonChange={(e) => setEmail(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                    />
-                  </IonItem>
-                </div>
-                
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={lockClosed} className="input-icon" />
-                      Mot de passe *
-                    </IonLabel>
-                    <IonInput 
-                      type="password" 
-                      value={password} 
-                      onIonChange={(e) => setPassword(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                    />
-                  </IonItem>
-                </div>
-                
-                <div className="input-wrapper">
-                  <IonItem className="custom-item">
-                    <IonLabel position="stacked" className="custom-label">
-                      <IonIcon icon={lockClosed} className="input-icon" />
-                      Confirmer le mot de passe *
-                    </IonLabel>
-                    <IonInput 
-                      type="password" 
-                      value={confirmPassword} 
-                      onIonChange={(e) => setConfirmPassword(e.detail.value!)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                      className="custom-input"
-                    />
-                  </IonItem>
-                </div>
-
-                {/* Info sécurité */}
-                <div className="security-info">
-                  <p>🔒 Le mot de passe doit contenir au moins 6 caractères</p>
-                </div>
-                
-                <IonButton 
-                  expand="block" 
-                  onClick={handleRegister} 
-                  disabled={loading}
-                  className="register-button"
-                >
-                  <span className="button-text">
-                    {loading ? "Création en cours..." : "Créer mon compte"}
-                  </span>
-                </IonButton>
-
-                {/* Lien vers connexion */}
-                <div className="login-link-container">
-                  <IonButton 
-                    fill="clear" 
-                    onClick={() => history.push("/login")}
+                {/* Email Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={mail} />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     disabled={loading}
-                    className="login-link-button"
-                  >
-                    Déjà un compte ? <strong>Se connecter</strong>
-                  </IonButton>
+                    className="custom-text-input"
+                  />
                 </div>
 
-                {/* Message d'erreur/succès */}
+                {/* Password Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={lockClosed} />
+                  </div>
+                  <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={loading}
+                    className="custom-text-input"
+                  />
+                </div>
+
+                {/* Confirm Password Field */}
+                <div className="input-field">
+                  <div className="input-icon">
+                    <IonIcon icon={lockClosed} />
+                  </div>
+                  <input
+                    type="password"
+                    placeholder="Confirmer le mot de passe"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={loading}
+                    className="custom-text-input"
+                  />
+                </div>
+
+                {/* Error Message */}
                 {message && (
-                  <div className={`message-box ${message.includes("✅") ? "success" : "error"}`}>
-                    {message}
+                  <div className="error-banner">
+                    <span>{message}</span>
                   </div>
                 )}
-              </div>
 
-              {/* Footer */}
-              <div className="register-footer fade-in-up-delay">
-                <p>
-                  En créant un compte, vous acceptez nos <strong>Conditions d'utilisation</strong><br />
-                  et notre <strong>Politique de confidentialité</strong>
+                {/* Register Button */}
+                <button 
+                  onClick={handleRegister} 
+                  disabled={loading}
+                  className="register-btn"
+                >
+                  {loading ? "Création..." : "CRÉER MON COMPTE"}
+                </button>
+
+                {/* Terms */}
+                <p className="terms">
+                  En continuant, vous acceptez nos <span>Conditions</span> et notre <span>Politique de confidentialité</span>
                 </p>
               </div>
+
+              {/* Login Link */}
+              <div className="login-redirect">
+                <p>Vous avez déjà un compte ?</p>
+                <button 
+                  onClick={() => history.push("/login")}
+                  disabled={loading}
+                  className="login-link-btn"
+                >
+                  SE CONNECTER
+                </button>
+              </div>
+
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -285,235 +234,467 @@ const RegisterPage: React.FC = () => {
           isOpen={loading} 
           message="Création de votre compte..." 
           spinner="crescent"
-          cssClass="custom-loading"
+          cssClass="custom-loader"
         />
 
         <IonAlert
           isOpen={showSuccessAlert}
           onDidDismiss={handleSuccessAlert}
-          header="💖 Bienvenue sur Aura !" // Icône coeur
-          message="Votre compte a été créé avec succès. Vous allez être redirigé vers la page de connexion."
+          header="🎉 Bienvenue !"
+          message="Votre compte a été créé. Commencez votre aventure maintenant !"
           buttons={[
             {
-              text: 'Commencer',
-              handler: handleSuccessAlert,
-              cssClass: 'alert-button-confirm'
+              text: 'COMMENCER',
+              handler: handleSuccessAlert
             }
           ]}
-          cssClass="custom-alert"
+          cssClass="success-alert"
         />
       </IonContent>
 
       <style>{`
-        /* ---------------------------------------------------- */
-        /* NOUVEAUX STYLES CSS POUR THÈME ROSÉ ET ADOUCI */
-        /* ---------------------------------------------------- */
+        /* ====================================== */
+        /*           TINDER MODERN DESIGN         */
+        /* ====================================== */
 
-        .register-header-content {
+        * {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .register-content {
+          --background: #FFFFFF;
+        }
+
+        /* Background Gradient */
+        .gradient-bg {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 45vh;
+          background: linear-gradient(180deg, #FF6B9D 0%, #FE3C72 50%, #E8325F 100%);
+          z-index: 0;
+        }
+
+        .main-grid {
+          position: relative;
+          z-index: 1;
+          height: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
+        .full-height {
+          min-height: 100vh;
+          padding: 20px 16px;
+        }
+
+        /* Logo Header */
+        .logo-header {
           text-align: center;
-          margin-bottom: 40px;
-          color: white;
+          margin-bottom: 32px;
+          animation: fadeInDown 0.8s ease-out;
         }
 
-        .icon-wrapper {
-          margin-bottom: 16px;
+        .flame-container {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 80px;
+          height: 80px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          backdrop-filter: blur(10px);
+          margin-bottom: 12px;
+          animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .main-icon {
-          font-size: 56px;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-          opacity: 0.95;
-          color: ${LIGHT_ROSE}; /* Couleur claire pour l'icône sur fond foncé */
+        .flame-logo {
+          font-size: 48px;
+          color: #FFFFFF;
+          filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
         }
 
-        .main-title {
+        .app-name {
+          font-size: 42px;
+          font-weight: 800;
+          color: #FFFFFF;
+          margin: 0;
+          letter-spacing: -1px;
+          text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Main Title Section */
+        .main-title-section {
+          text-align: center;
+          margin-bottom: 32px;
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .signup-title {
           font-size: 32px;
           font-weight: 700;
-          margin: 0 0 12px 0;
-          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          color: #FFFFFF;
+          margin: 0 0 8px 0;
           letter-spacing: -0.5px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          opacity: 0.95;
         }
 
-        .subtitle {
+        .signup-subtitle {
           font-size: 16px;
-          opacity: 0.85;
+          color: rgba(255, 255, 255, 0.9);
           margin: 0;
-          font-weight: 400;
-          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          letter-spacing: 0.1px;
           line-height: 1.5;
+          font-weight: 400;
+          padding: 0 20px;
         }
 
-        .form-container {
-          background: rgba(255, 255, 255, 0.95); /* Légèrement plus opaque */
+        /* Form Wrapper */
+        .form-wrapper {
+          background: #FFFFFF;
           border-radius: 24px;
-          padding: 40px 32px;
-          box-shadow: 0 16px 50px rgba(0, 0, 0, 0.1), /* Ombre plus douce */
-                      inset 0 1px 0 rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(15px) saturate(180%);
-          border: 1px solid rgba(255, 255, 255, 0.7); /* Bordure plus douce */
-          margin-bottom: 20px;
+          padding: 32px 24px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          animation: slideUp 0.8s ease-out 0.3s both;
         }
 
-        .input-wrapper {
-          margin-bottom: 20px;
+        /* Input Fields */
+        .input-field {
           position: relative;
-        }
-
-        .custom-item {
-          --background: rgba(255, 250, 250, 0.8); /* Fond blanc/rose très léger */
-          --border-radius: 14px;
-          --padding-start: 16px;
-          --padding-end: 16px;
-          --inner-padding-end: 12px;
-          --min-height: 56px;
-          border: 1.2px solid #ffe4e6; /* Bordure rose très claire */
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          margin: 0;
-          backdrop-filter: blur(10px);
-        }
-
-        .custom-item:hover {
-          border-color: ${PRIMARY_ROSE}40; /* Rose transparent au survol */
-          --background: rgba(255, 255, 255, 0.95);
-        }
-
-        .custom-label {
-          color: ${TEXT_COLOR} !important;
-          font-weight: 500;
-          font-size: 14px;
+          margin-bottom: 16px;
           display: flex;
           align-items: center;
-          gap: 6px;
-          letter-spacing: 0.1px;
+          background: #F6F6F6;
+          border-radius: 16px;
+          padding: 0 16px;
+          height: 60px;
+          transition: all 0.3s ease;
+          border: 2px solid transparent;
+        }
+
+        .input-field:focus-within {
+          background: #FFFFFF;
+          border-color: #FE3C72;
+          box-shadow: 0 0 0 4px rgba(254, 60, 114, 0.1);
         }
 
         .input-icon {
-          font-size: 16px;
-          opacity: 0.7;
-          color: ${PRIMARY_ROSE}; /* Icônes en rose */
+          flex-shrink: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+          color: #8E8E93;
+          font-size: 20px;
         }
 
-        .custom-input {
-          --color: ${TEXT_COLOR};
-          --padding-start: 0;
-          --padding-top: 18px;
+        .input-field:focus-within .input-icon {
+          color: #FE3C72;
+        }
+
+        .custom-text-input {
+          flex: 1;
+          border: none;
+          background: transparent;
           font-size: 16px;
           font-weight: 500;
-          letter-spacing: 0.1px;
+          color: #1C1C1E;
+          outline: none;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .security-info {
-          /* Conserve un fond blanc/rose très clair pour la cohérence */
-          background: rgba(255, 250, 250, 0.9); 
-          padding: 12px 16px;
+        .custom-text-input::placeholder {
+          color: #8E8E93;
+          font-weight: 400;
+        }
+
+        .custom-text-input:disabled {
+          opacity: 0.5;
+        }
+
+        /* Error Banner */
+        .error-banner {
+          background: #FFF5F5;
+          color: #E53E3E;
+          padding: 14px 16px;
           border-radius: 12px;
-          margin-bottom: 24px;
-          border: 1px solid rgba(233, 30, 99, 0.1); /* Bordure rose légère */
-        }
-
-        .security-info p {
-          margin: 0;
-          font-size: 13px;
-          color: ${TEXT_COLOR}99;
-          text-align: center;
-          font-weight: 500;
-          letter-spacing: 0.1px;
-          line-height: 1.4;
-        }
-
-        .register-button {
-          --background: linear-gradient(135deg, ${PRIMARY_ROSE} 0%, ${GRADIENT_END} 100%); /* Dégradé de bouton rosé */
-          --background-hover: linear-gradient(135deg, #c41852 0%, #d44d5c 100%);
-          --border-radius: 14px;
-          --box-shadow: 0 8px 30px rgba(233, 30, 99, 0.2); /* Ombre rosée */
-          height: 56px;
-          font-size: 16px;
-          font-weight: 600;
           margin-bottom: 16px;
-          letter-spacing: 0.2px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .register-button:hover {
-          transform: translateY(-2px);
-          --box-shadow: 0 12px 40px rgba(233, 30, 99, 0.3);
-        }
-
-        .login-link-container {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-
-        .login-link-button {
-          --color: ${TEXT_COLOR}a0;
           font-size: 14px;
           font-weight: 500;
-          text-transform: none;
-          letter-spacing: 0.1px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border-left: 4px solid #E53E3E;
+          animation: shake 0.5s ease;
         }
 
-        .login-link-button:hover {
-          --color: ${PRIMARY_ROSE};
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
         }
 
-        .login-link-button strong {
-          font-weight: 600;
-          color: ${PRIMARY_ROSE}; /* Lien en rose primaire */
+        /* Register Button */
+        .register-btn {
+          width: 100%;
+          height: 60px;
+          background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+          border: none;
+          border-radius: 30px;
+          color: #FFFFFF;
+          font-size: 16px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          margin: 24px 0 16px 0;
+          box-shadow: 0 8px 24px rgba(254, 60, 114, 0.4);
+          transition: all 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .message-box.error {
-          background: rgba(254, 242, 242, 0.9);
-          color: #991b1b;
-          border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-        
-        /* Ajustement du message de succès pour le rose */
-        .message-box.success {
-          background: rgba(255, 240, 245, 0.9); /* Rose très très clair */
-          color: #c084fc; /* Tonalité douce de violet/rose */
-          border: 1px solid rgba(233, 30, 99, 0.2); 
+        .register-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 32px rgba(254, 60, 114, 0.5);
         }
 
+        .register-btn:active:not(:disabled) {
+          transform: translateY(0);
+        }
 
-        .register-footer {
+        .register-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        /* Terms */
+        .terms {
           text-align: center;
-          margin-top: 32px;
-          color: white;
-          opacity: 0.8;
+          font-size: 12px;
+          color: #8E8E93;
+          line-height: 1.6;
+          margin: 0;
+          padding: 0 8px;
         }
 
-        .register-footer strong {
+        .terms span {
+          color: #FE3C72;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        /* Login Redirect */
+        .login-redirect {
+          text-align: center;
+          margin-top: 24px;
+          animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .login-redirect p {
+          font-size: 15px;
+          color: #FFFFFF;
+          margin: 0 0 12px 0;
           font-weight: 500;
-          opacity: 0.95; /* Légèrement plus visible */
         }
 
-        /* Les cercles d'arrière-plan restent efficaces pour l'effet de flou sur le dégradé */
-
-        .custom-loading {
-          --background: rgba(0, 0, 0, 0.65);
-          --spinner-color: ${PRIMARY_ROSE}; /* Spinner en rose */
-          backdrop-filter: blur(4px);
+        .login-link-btn {
+          background: transparent;
+          border: 2px solid #FFFFFF;
+          color: #FFFFFF;
+          padding: 14px 40px;
+          border-radius: 30px;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .custom-alert {
-          --background: white;
-          --max-width: 300px;
-          border-radius: 16px;
+        .login-link-btn:hover:not(:disabled) {
+          background: #FFFFFF;
+          color: #FE3C72;
+          transform: scale(1.05);
         }
 
-        .alert-button-confirm {
-          color: ${PRIMARY_ROSE} !important; /* Bouton d'alerte en rose */
+        .login-link-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        /* Custom Loader */
+        .custom-loader {
+          --background: rgba(0, 0, 0, 0.85);
+          --spinner-color: #FE3C72;
+          backdrop-filter: blur(10px);
+        }
+
+        /* Success Alert */
+        .success-alert {
+          --background: #FFFFFF;
+          --max-width: 320px;
+        }
+
+        .success-alert .alert-button-group button {
+          color: #FE3C72 !important;
           font-weight: 700 !important;
           font-size: 15px !important;
         }
 
-        /* Animations restent les mêmes */
+        /* Animations */
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
 
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.5);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        /* ====================================== */
+        /*            RESPONSIVE DESIGN           */
+        /* ====================================== */
+
+        @media (max-width: 576px) {
+          .full-height {
+            padding: 16px 12px;
+          }
+
+          .flame-container {
+            width: 70px;
+            height: 70px;
+          }
+
+          .flame-logo {
+            font-size: 42px;
+          }
+
+          .app-name {
+            font-size: 36px;
+          }
+
+          .signup-title {
+            font-size: 28px;
+          }
+
+          .signup-subtitle {
+            font-size: 15px;
+          }
+
+          .form-wrapper {
+            padding: 28px 20px;
+          }
+
+          .input-field {
+            height: 56px;
+          }
+
+          .register-btn {
+            height: 56px;
+            font-size: 15px;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .gradient-bg {
+            height: 50vh;
+          }
+
+          .full-height {
+            padding: 40px 24px;
+          }
+
+          .form-wrapper {
+            padding: 40px 32px;
+          }
+
+          .main-title-section {
+            margin-bottom: 40px;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .form-wrapper {
+            padding: 48px 40px;
+          }
+
+          .input-field {
+            height: 64px;
+          }
+
+          .register-btn {
+            height: 64px;
+            font-size: 17px;
+          }
+        }
+
+        @media (max-height: 700px) {
+          .logo-header {
+            margin-bottom: 24px;
+          }
+
+          .main-title-section {
+            margin-bottom: 24px;
+          }
+
+          .flame-container {
+            width: 60px;
+            height: 60px;
+          }
+
+          .flame-logo {
+            font-size: 36px;
+          }
+
+          .app-name {
+            font-size: 32px;
+          }
+        }
       `}</style>
     </IonPage>
   );
