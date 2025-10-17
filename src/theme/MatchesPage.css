@@ -1,0 +1,85 @@
+.matches-container {
+  background: linear-gradient(135deg, #f7f8ff 0%, #ffffff 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.matches-title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #444;
+}
+
+.matches-list {
+  margin-top: 1rem;
+}
+
+.match-item {
+  --background: #fff;
+  margin: 10px 15px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  padding: 10px;
+}
+
+.match-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.match-item ion-avatar img {
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.match-item h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.match-item p {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 4px;
+}
+
+.chat-btn {
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.superlike {
+  background: linear-gradient(90deg, #fce9ff 0%, #fff1ff 100%);
+}
+
+.superlike-star {
+  color: #ffb703;
+  margin-left: 4px;
+}
+
+.no-matches {
+  text-align: center;
+  margin-top: 15%;
+  color: #555;
+}
+
+.no-matches img {
+  width: 120px;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.no-matches h2 {
+  font-weight: 600;
+  color: #333;
+}
+
+.no-matches p {
+  font-size: 0.95rem;
+  color: #666;
+}

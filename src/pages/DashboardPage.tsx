@@ -2,9 +2,10 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { IonApp, IonContent, IonButton, IonIcon } from "@ionic/react";
 import { getAuth, signOut } from "firebase/auth";
 import "../theme/DashboardPage.css"
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, getDoc, getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { app } from "../firebaseConfig";
 import { useHistory } from "react-router-dom";
+import { toastController } from "@ionic/core";
 import { 
   personCircleOutline, 
   close, 
@@ -69,6 +70,41 @@ const DashboardPage: React.FC = () => {
     return () => unsubscribe();
   }, [db]);
 
+  const showToast = async (message: string) => {
+    const toast = await toastController.create({
+      message,
+      duration: 2000,
+      color: "success",
+      position: "top",
+    });
+    await toast.present();
+  };
+
+  const addMatch = async (matchedProfile: Profile, isSuperLike: boolean = false) => {
+    const auth = getAuth(app);
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    try {
+      // 📂 Créer un document dans la collection "matches"
+      const matchRef = doc(collection(db, "matches"), `${currentUser.uid}_${matchedProfile.id}`);
+      await setDoc(matchRef, {
+        userId: currentUser.uid,
+        matchedUserId: matchedProfile.id,
+        name: matchedProfile.name,
+        age: matchedProfile.age,
+        image: matchedProfile.images?.[0] || "/assets/default.jpg",
+        isSuperLike: isSuperLike,
+        createdAt: new Date(),
+      });
+
+      // ✅ Affiche notification de succès
+      showToast("Vous avez matché !");
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du match :", error);
+    }
+  };
+
   /* 🔄 Swipe */
   const swipe = useCallback((direction: "left" | "right" | "up") => {
     const currentCardRef = cardRefs.current[currentIndex.current];
@@ -84,9 +120,19 @@ const DashboardPage: React.FC = () => {
     } else if (direction === "right") {
       moveX = 400;
       rotate = 20;
+      // Ajouter le match quand on swipe à droite (coeur)
+      const currentProfile = profiles[currentIndex.current];
+      if (currentProfile) {
+        addMatch(currentProfile, false);
+      }
     } else if (direction === "up") {
       moveY = -400;
       rotate = 0;
+      // Ajouter le match quand on swipe vers le haut (étoile - super like)
+      const currentProfile = profiles[currentIndex.current];
+      if (currentProfile) {
+        addMatch(currentProfile, true);
+      }
     }
 
     currentCardRef.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
@@ -97,7 +143,7 @@ const DashboardPage: React.FC = () => {
       currentIndex.current += 1;
       setCurrentImageIndex(0);
     }, 300);
-  }, []);
+  }, [profiles]);
 
   /* 🖱 Gestion drag */
   const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
@@ -274,8 +320,6 @@ const DashboardPage: React.FC = () => {
       <IonContent className="dashboard-content">
         {/* Top Bar */}
         <div className="top-bar">
-          
-          
           <div className="aura-logo">
             <IonIcon icon={flameSharp} className="logo-icon" />
             <span>Aura</span>

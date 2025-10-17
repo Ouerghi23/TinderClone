@@ -13,10 +13,13 @@ import ProfilePage from "./pages/ProfilePage";
 import EditProfile from "./pages/EditProfile";
 import ForgotPassword from "./pages/ForgotPassword";
 import LoadingPage from "./pages/LoadingPage";
+import MatchesPage from "./pages/MatchesPage";
+import AIChatPage from "./pages/AIChatPage";
 
 /* Ionic setup */
 import "./theme/variables.css";
 import "@ionic/react/css/core.css";
+
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -49,6 +52,9 @@ const App: React.FC = () => {
               <Route exact path="/dashboard" component={DashboardPage} />
               <Route exact path="/profile" component={ProfilePage} />
               <Route exact path="/edit-profile" component={EditProfile} />
+              <Route exact path="/matches" component={MatchesPage} />
+              <Route exact path="/ai-chat" component={AIChatPage} />
+
               <Redirect exact from="/" to="/dashboard" />
             </>
           ) : (
