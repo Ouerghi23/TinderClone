@@ -1,561 +1,704 @@
-        /* ====================================== */
-        /*        TINDER DASHBOARD DESIGN         */
-        /* ====================================== */
-
-        * {
-          -webkit-tap-highlight-color: transparent;
-          user-select: none;
-        }
-
-        .dashboard-content {
-          --background: #F5F5F5;
-          position: relative;
-          overflow: hidden;
-        }
-
-        /* Top Bar */
-        .top-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 12px 20px;
-          background: #FFFFFF;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-          position: sticky;
-          top: 0;
-          z-index: 100;
-        }
-
-        .icon-btn {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: none;
-          background: transparent;
-          color: #8E8E93;
-          font-size: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          position: relative;
-        }
-
-        .icon-btn:hover {
-          background: #F6F6F6;
-          color: #FE3C72;
-          transform: scale(1.1);
-        }
-
-        .top-right-buttons {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .ai-chat-btn {
-          position: relative;
-        }
-
-        .ai-chat-btn .ai-badge {
-          position: absolute;
-          top: -2px;
-          right: -2px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          font-size: 9px;
-          font-weight: 700;
-          padding: 2px 5px;
-          border-radius: 8px;
-          min-width: 16px;
-          letter-spacing: 0.5px;
-        }
-
-        .logout-text-btn {
-          background: transparent;
-          border: 2px solid #FE3C72;
-          color: #FE3C72;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .logout-text-btn:hover {
-          background: #FE3C72;
-          color: white;
-          transform: scale(1.05);
-        }
-
-        .messages-btn .badge {
-          position: absolute;
-          top: 0;
-          right: 0;
-          background: #FE3C72;
-          color: white;
-          font-size: 10px;
-          font-weight: 700;
-          padding: 2px 6px;
-          border-radius: 10px;
-          min-width: 18px;
-        }
-
-        .aura-logo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #FE3C72;
-          font-size: 26px;
-          font-weight: 800;
-          letter-spacing: -0.5px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .logo-icon {
-          font-size: 32px;
-          filter: drop-shadow(0 2px 4px rgba(254, 60, 114, 0.3));
-          animation: flicker 2s ease-in-out infinite;
-        }
-
-        @keyframes flicker {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.8; }
-        }
-
-        /* Container des cartes */
-        .tinder-container {
-          position: relative;
-          width: 100%;
-          height: calc(100vh - 240px);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px 0;
-        }
-
-        /* Cartes */
-        .tinder-card {
-          position: absolute;
-          width: calc(100% - 40px);
-          max-width: 380px;
-          height: 560px;
-          background: #FFFFFF;
-          border-radius: 16px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-          overflow: hidden;
-          cursor: grab;
-          --like-opacity: 0;
-          --nope-opacity: 0;
-        }
-
-        .tinder-card.active {
-          cursor: grab;
-        }
-
-        .tinder-card.active:active {
-          cursor: grabbing;
-        }
-
-        .tinder-card:not(.active) {
-          pointer-events: none;
-        }
-
-        /* Like/Nope Stamps */
-        .stamp {
-          position: absolute;
-          top: 60px;
-          font-size: 48px;
-          font-weight: 900;
-          padding: 16px 24px;
-          border-radius: 12px;
-          border: 6px solid;
-          z-index: 10;
-          pointer-events: none;
-          transform: rotate(-20deg);
-          letter-spacing: 2px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .like-stamp {
-          right: 40px;
-          color: #10B981;
-          border-color: #10B981;
-          opacity: var(--like-opacity);
-          transform: rotate(20deg);
-        }
-
-        .nope-stamp {
-          left: 40px;
-          color: #EF4444;
-          border-color: #EF4444;
-          opacity: var(--nope-opacity);
-          transform: rotate(-20deg);
-        }
-
-        /* Navigation zones for images */
-        .nav-zone {
-          position: absolute;
-          top: 0;
-          width: 50%;
-          height: 65%;
-          z-index: 5;
-          cursor: pointer;
-        }
-
-        .left-zone {
-          left: 0;
-        }
-
-        .right-zone {
-          right: 0;
-        }
-
-        /* Image indicators */
-        .image-indicators {
-          position: absolute;
-          top: 12px;
-          left: 12px;
-          right: 12px;
-          display: flex;
-          gap: 6px;
-          z-index: 6;
-        }
-
-        .indicator {
-          flex: 1;
-          height: 3px;
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 2px;
-          transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-          background: rgba(255, 255, 255, 0.95);
-        }
-
-        .profile-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          pointer-events: none;
-        }
-
-        /* Profile Overlay */
-        .profile-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
-          padding: 24px 20px 20px 20px;
-        }
-
-        .profile-info {
-          color: white;
-        }
-
-        .name-age {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 8px;
-        }
-
-        .name-age h2 {
-          font-size: 28px;
-          font-weight: 700;
-          margin: 0;
-          letter-spacing: -0.5px;
-        }
-
-        .info-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: 2px solid white;
-          background: transparent;
-          color: white;
-          font-size: 22px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .info-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          transform: scale(1.1);
-        }
-
-        .bio {
-          font-size: 15px;
-          margin: 0 0 8px 0;
-          line-height: 1.4;
-          opacity: 0.95;
-        }
-
-        .meta-info {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 12px;
-        }
-
-        .distance {
-          font-size: 14px;
-          font-weight: 500;
-          opacity: 0.9;
-        }
-
-        .interests {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .interest-tag {
-          background: rgba(255, 255, 255, 0.25);
-          backdrop-filter: blur(10px);
-          color: white;
-          padding: 6px 12px;
-          border-radius: 20px;
-          font-size: 13px;
-          font-weight: 600;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Actions */
-        .actions {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 20px;
-          padding: 20px;
-        }
-
-        .action-btn {
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 28px;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .action-btn:hover {
-          transform: scale(1.15);
-        }
-
-        .action-btn:active {
-          transform: scale(1.05);
-        }
-
-        .nope-btn {
-          background: #FFFFFF;
-          color: #EF4444;
-        }
-
-        .nope-btn:hover {
-          background: #FEE2E2;
-          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-        }
-
-        .star-btn {
-          width: 56px;
-          height: 56px;
-          background: #FFFFFF;
-          color: #3B82F6;
-          font-size: 24px;
-        }
-
-        .star-btn:hover {
-          background: #DBEAFE;
-          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .like-btn {
-          background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
-          color: white;
-        }
-
-        .like-btn:hover {
-          box-shadow: 0 6px 24px rgba(254, 60, 114, 0.5);
-        }
-
-        /* Empty State */
-        .empty-state {
-          text-align: center;
-          color: #8E8E93;
-        }
-
-        .empty-icon {
-          font-size: 80px;
-          margin-bottom: 20px;
-          opacity: 0.3;
-        }
-
-        .empty-state h3 {
-          font-size: 22px;
-          font-weight: 600;
-          margin: 0 0 8px 0;
-          color: #4A4A4A;
-        }
-
-        .empty-state p {
-          font-size: 15px;
-          margin: 0;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          background: #FFFFFF;
-          padding: 12px 0;
-          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-item {
-          background: transparent;
-          border: none;
-          color: #8E8E93;
-          font-size: 28px;
-          padding: 8px 20px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border-radius: 12px;
-        }
-
-        .nav-item:hover {
-          color: #FE3C72;
-          background: #FFF5F7;
-        }
-
-        .nav-item.active {
-          color: #FE3C72;
-        }
-
-        /* ====================================== */
-        /*            RESPONSIVE DESIGN           */
-        /* ====================================== */
-
-        @media (max-width: 768px) {
-          .tinder-card {
-            width: calc(100% - 32px);
-            height: 520px;
-          }
-
-          .name-age h2 {
-            font-size: 24px;
-          }
-
-          .action-btn {
-            width: 56px;
-            height: 56px;
-            font-size: 24px;
-          }
-
-          .star-btn {
-            width: 48px;
-            height: 48px;
-            font-size: 20px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .top-bar {
-            padding: 10px 16px;
-          }
-
-          .aura-logo {
-            font-size: 22px;
-          }
-
-          .aura-logo span {
-            display: none;
-          }
-
-          .logo-icon {
-            font-size: 28px;
-          }
-
-          .top-right-buttons {
-            gap: 8px;
-          }
-
-          .logout-text-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-          }
-
-          .tinder-card {
-            width: calc(100% - 24px);
-            height: 480px;
-          }
-
-          .stamp {
-            font-size: 36px;
-            padding: 12px 18px;
-            border-width: 4px;
-          }
-
-          .like-stamp {
-            right: 20px;
-          }
-
-          .nope-stamp {
-            left: 20px;
-          }
-
-          .profile-overlay {
-            padding: 20px 16px 16px 16px;
-          }
-
-          .name-age h2 {
-            font-size: 22px;
-          }
-
-          .actions {
-            gap: 16px;
-            padding: 16px;
-          }
-
-          .action-btn {
-            width: 52px;
-            height: 52px;
-            font-size: 22px;
-          }
-
-          .star-btn {
-            width: 44px;
-            height: 44px;
-            font-size: 18px;
-          }
-
-          .nav-item {
-            font-size: 24px;
-            padding: 6px 16px;
-          }
-        }
-
-        @media (max-height: 700px) {
-          .tinder-container {
-            height: calc(100vh - 220px);
-          }
-
-          .tinder-card {
-            height: 440px;
-          }
-        }
-      
+/* ====================================== */
+/*    AURA DASHBOARD - THÈME ROSÉ MODERNE */
+/* ====================================== */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+.dashboard-content {
+  --background: linear-gradient(135deg, #FFE6F0 0%, #FFF0F5 50%, #FFFFFF 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de fond animé subtil */
+.dashboard-content::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 107, 157, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(254, 60, 114, 0.06) 0%, transparent 50%);
+  animation: backgroundPulse 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes backgroundPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ====================================== */
+/*             TOP BAR                    */
+/* ====================================== */
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 12px rgba(254, 60, 114, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+}
+
+.aura-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #FE3C72;
+  letter-spacing: -0.5px;
+}
+
+.logo-icon {
+  font-size: 32px;
+  color: #FE3C72;
+  filter: drop-shadow(0 2px 8px rgba(254, 60, 114, 0.3));
+  animation: logoFlicker 3s ease-in-out infinite;
+}
+
+@keyframes logoFlicker {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.9; 
+    transform: scale(1.05);
+  }
+}
+
+.top-right-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(254, 60, 114, 0.2);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(254, 60, 114, 0.1) 100%);
+  color: #FE3C72;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 22px;
+}
+
+.icon-btn:hover {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: #FFFFFF;
+  border-color: #FE3C72;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(254, 60, 114, 0.3);
+}
+
+.ai-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(254, 60, 114, 0.4);
+}
+
+.logout-text-btn {
+  background: transparent;
+  border: 2px solid #FE3C72;
+  color: #FE3C72;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.logout-text-btn:hover {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: #FFFFFF;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(254, 60, 114, 0.3);
+}
+
+/* ====================================== */
+/*         CONTAINER DES CARTES           */
+/* ====================================== */
+
+.tinder-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: calc(100vh - 240px);
+  margin: 80px auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+/* ====================================== */
+/*          CARTES DE PROFIL              */
+/* ====================================== */
+
+.tinder-card {
+  position: absolute;
+  width: 100%;
+  max-width: 400px;
+  height: 580px;
+  background: #FFFFFF;
+  border-radius: 28px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 
+    0 20px 60px rgba(254, 60, 114, 0.15),
+    0 0 0 1px rgba(255, 182, 193, 0.2);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  --like-opacity: 0;
+  --nope-opacity: 0;
+}
+
+.tinder-card:active {
+  cursor: grabbing;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* ====================================== */
+/*         STAMPS LIKE/NOPE               */
+/* ====================================== */
+
+.stamp {
+  position: absolute;
+  top: 50px;
+  font-size: 64px;
+  font-weight: 900;
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: 6px solid;
+  transform: rotate(-20deg);
+  z-index: 10;
+  pointer-events: none;
+  letter-spacing: 4px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.like-stamp {
+  right: 30px;
+  color: #00D084;
+  border-color: #00D084;
+  opacity: var(--like-opacity);
+  transform: rotate(20deg);
+  transition: opacity 0.2s ease;
+}
+
+.nope-stamp {
+  left: 30px;
+  color: #FF6B9D;
+  border-color: #FF6B9D;
+  opacity: var(--nope-opacity);
+  transform: rotate(-20deg);
+  transition: opacity 0.2s ease;
+}
+
+/* ====================================== */
+/*      NAVIGATION ENTRE IMAGES           */
+/* ====================================== */
+
+.nav-zone {
+  position: absolute;
+  top: 0;
+  bottom: 150px;
+  width: 40%;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.left-zone {
+  left: 0;
+}
+
+.right-zone {
+  right: 0;
+}
+
+.image-indicators {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 6px;
+  padding: 0 16px;
+  z-index: 6;
+}
+
+.indicator {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  transition: background 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.indicator.active {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ====================================== */
+/*        OVERLAY D'INFORMATIONS          */
+/* ====================================== */
+
+.profile-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+  padding: 24px 20px 20px;
+  z-index: 4;
+}
+
+.profile-info {
+  color: #FFFFFF;
+}
+
+.name-age {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.name-age h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.info-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 20px;
+}
+
+.info-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.bio {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+  opacity: 0.95;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.meta-info {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.distance {
+  font-size: 14px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.interest-tag {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.interest-tag:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* ====================================== */
+/*            BOUTONS D'ACTION            */
+/* ====================================== */
+
+.actions {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 50;
+  padding: 0 20px;
+}
+
+.action-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 28px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.nope-btn {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: #FFFFFF;
+}
+
+.nope-btn:hover {
+  box-shadow: 0 12px 32px rgba(254, 60, 114, 0.4);
+}
+
+.star-btn {
+  background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+  color: #FFFFFF;
+  width: 56px;
+  height: 56px;
+  font-size: 24px;
+}
+
+.star-btn:hover {
+  box-shadow: 0 12px 32px rgba(41, 182, 246, 0.4);
+}
+
+.like-btn {
+  background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
+  color: #FFFFFF;
+}
+
+.like-btn:hover {
+  box-shadow: 0 12px 32px rgba(0, 200, 83, 0.4);
+}
+
+/* ====================================== */
+/*        BOTTOM NAVIGATION               */
+/* ====================================== */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 -2px 12px rgba(254, 60, 114, 0.08);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+  border-top: 1px solid rgba(255, 182, 193, 0.2);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #8E8E93;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 26px;
+  padding: 10px 20px;
+  border-radius: 16px;
+}
+
+.nav-item:hover {
+  color: #FE3C72;
+  background: rgba(254, 60, 114, 0.08);
+}
+
+.nav-item.active {
+  color: #FE3C72;
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(254, 60, 114, 0.15) 100%);
+}
+
+/* ====================================== */
+/*           ÉTAT VIDE                    */
+/* ====================================== */
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8E8E93;
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: #FFB6C6;
+  margin-bottom: 20px;
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1C1C1E;
+  margin: 0 0 12px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #8E8E93;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ====================================== */
+/*          RESPONSIVE DESIGN             */
+/* ====================================== */
+
+@media (max-width: 576px) {
+  .top-bar {
+    height: 56px;
+    padding: 0 16px;
+  }
+
+  .aura-logo {
+    font-size: 20px;
+  }
+
+  .logo-icon {
+    font-size: 28px;
+  }
+
+  .logout-text-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .tinder-container {
+    height: calc(100vh - 220px);
+    margin: 70px auto 20px;
+  }
+
+  .tinder-card {
+    max-width: 360px;
+    height: 520px;
+  }
+
+  .stamp {
+    font-size: 48px;
+    top: 40px;
+  }
+
+  .name-age h2 {
+    font-size: 24px;
+  }
+
+  .actions {
+    bottom: 80px;
+    gap: 16px;
+  }
+
+  .action-btn {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+
+  .star-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .bottom-nav {
+    height: 65px;
+  }
+
+  .nav-item {
+    font-size: 24px;
+    padding: 8px 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .tinder-container {
+    max-width: 480px;
+    height: calc(100vh - 260px);
+  }
+
+  .tinder-card {
+    max-width: 440px;
+    height: 620px;
+  }
+
+  .actions {
+    gap: 28px;
+  }
+
+  .action-btn {
+    width: 72px;
+    height: 72px;
+    font-size: 32px;
+  }
+
+  .star-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+  }
+}
+
+@media (min-width: 992px) {
+  .tinder-container {
+    max-width: 500px;
+  }
+
+  .tinder-card {
+    max-width: 460px;
+    height: 640px;
+  }
+}
+
+@media (max-height: 700px) {
+  .tinder-container {
+    height: calc(100vh - 200px);
+    margin: 65px auto 15px;
+  }
+
+  .tinder-card {
+    height: 480px;
+  }
+
+  .actions {
+    bottom: 75px;
+  }
+
+  .bottom-nav {
+    height: 60px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .top-bar {
+    height: 50px;
+  }
+
+  .tinder-container {
+    height: calc(100vh - 160px);
+    margin: 60px auto 10px;
+  }
+
+  .tinder-card {
+    height: 400px;
+  }
+
+  .actions {
+    bottom: 65px;
+    gap: 12px;
+  }
+
+  .action-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+  }
+
+  .star-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .bottom-nav {
+    height: 55px;
+  }
+}

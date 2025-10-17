@@ -1,0 +1,589 @@
+        /* ====================================== */
+        /*    AURA - THÈME ROSÉ LOVE MODERNE      */
+        /* ====================================== */
+
+        * {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .register-content {
+          --background: #FFFFFF;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Background avec dégradés rosés romantiques */
+        .gradient-bg {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, #FF6B9D 0%, #FE5C85 25%, #FE3C72 50%, #E91E63 75%, #C2185B 100%);
+          z-index: 0;
+        }
+
+        /* Formes décoratives animées */
+        .animated-bg-shapes {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 1;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        .shape {
+          position: absolute;
+          border-radius: 50%;
+          opacity: 0.15;
+        }
+
+        .shape-1 {
+          top: -10%;
+          left: -10%;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+          animation: pulse-slow 6s ease-in-out infinite;
+        }
+
+        .shape-2 {
+          bottom: -15%;
+          right: -15%;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, rgba(255,182,193,0.5) 0%, transparent 70%);
+          animation: pulse-slower 8s ease-in-out infinite;
+        }
+
+        .shape-3 {
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 700px;
+          height: 700px;
+          background: radial-gradient(circle, rgba(255,105,180,0.3) 0%, transparent 70%);
+          animation: spin-very-slow 20s linear infinite;
+        }
+
+        .main-grid {
+          position: relative;
+          z-index: 2;
+          height: 100%;
+          padding: 0;
+          margin: 0;
+        }
+
+        .full-height {
+          min-height: 100vh;
+          padding: 24px 16px;
+        }
+
+        /* Logo Header avec effet néon */
+        .logo-header {
+          text-align: center;
+          margin-bottom: 32px;
+          animation: fadeInDown 0.8s ease-out;
+        }
+
+        .flame-container {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 90px;
+          height: 90px;
+          background: rgba(255, 255, 255, 0.25);
+          border-radius: 50%;
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          margin-bottom: 16px;
+          box-shadow: 0 8px 32px rgba(254, 60, 114, 0.3);
+          animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .flame-logo {
+          font-size: 52px;
+          color: #FFFFFF;
+          filter: drop-shadow(0 0 20px rgba(255,255,255,0.9));
+          animation: flicker 2.5s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+          0%, 100% { 
+            opacity: 1; 
+            transform: scale(1);
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.9));
+          }
+          50% { 
+            opacity: 0.85; 
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 30px rgba(255,255,255,1));
+          }
+        }
+
+        .app-name {
+          font-size: 56px;
+          font-weight: 800;
+          color: #FFFFFF;
+          margin: 0 0 12px 0;
+          letter-spacing: -2px;
+          text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .divider-line {
+          height: 3px;
+          width: 80px;
+          margin: 0 auto;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+          border-radius: 2px;
+        }
+
+        /* Titre principal */
+        .main-title-section {
+          text-align: center;
+          margin-bottom: 36px;
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .signup-title {
+          font-size: 36px;
+          font-weight: 700;
+          color: #FFFFFF;
+          margin: 0 0 12px 0;
+          letter-spacing: -1px;
+          text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        .signup-subtitle {
+          font-size: 17px;
+          color: rgba(255, 255, 255, 0.95);
+          margin: 0;
+          line-height: 1.6;
+          font-weight: 400;
+          padding: 0 20px;
+        }
+
+        /* Carte du formulaire avec glassmorphism */
+        .form-wrapper {
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(30px);
+          -webkit-backdrop-filter: blur(30px);
+          border-radius: 28px;
+          padding: 36px 28px;
+          box-shadow: 0 20px 60px rgba(254, 60, 114, 0.25),
+                      0 0 0 1px rgba(255, 255, 255, 0.5);
+          animation: slideUp 0.8s ease-out 0.3s both;
+        }
+
+        /* Champs de saisie avec IonInput */
+        .input-field {
+          position: relative;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          background: rgba(255, 240, 245, 0.6);
+          border-radius: 18px;
+          padding: 0 18px;
+          height: 62px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .input-field:focus-within {
+          background: #FFFFFF;
+          border-color: #FE3C72;
+          box-shadow: 0 0 0 4px rgba(254, 60, 114, 0.12),
+                      0 8px 24px rgba(254, 60, 114, 0.15);
+          transform: translateY(-2px);
+        }
+
+        .input-icon {
+          flex-shrink: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 14px;
+          color: #FF6B9D;
+          font-size: 22px;
+          transition: all 0.3s ease;
+        }
+
+        .input-field:focus-within .input-icon {
+          color: #FE3C72;
+          transform: scale(1.1);
+        }
+
+        .custom-ion-input {
+          --padding-start: 0;
+          --padding-end: 0;
+          --background: transparent;
+          font-size: 16px;
+          font-weight: 500;
+          color: #1C1C1E;
+          flex: 1;
+        }
+
+        .custom-ion-input::part(native) {
+          background: transparent;
+          border: none;
+          outline: none;
+        }
+
+        .custom-ion-input::part(native)::placeholder {
+          color: #FF8FAB;
+          font-weight: 400;
+        }
+
+        /* Messages d'erreur */
+        .error-banner {
+          background: linear-gradient(135deg, #FFF5F7 0%, #FFE5EA 100%);
+          color: #E53E3E;
+          padding: 16px 18px;
+          border-radius: 14px;
+          margin-bottom: 18px;
+          font-size: 14px;
+          font-weight: 500;
+          border-left: 4px solid #E53E3E;
+          animation: shake 0.5s ease;
+          box-shadow: 0 4px 12px rgba(229, 62, 62, 0.1);
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
+        }
+
+        /* Bouton d'inscription principal */
+        .register-btn {
+          --background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 50%, #E91E63 100%);
+          --background-hover: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 50%, #E91E63 100%);
+          --background-activated: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 50%, #E91E63 100%);
+          --color: #FFFFFF;
+          --border-radius: 31px;
+          --box-shadow: 0 12px 28px rgba(254, 60, 114, 0.45);
+          --padding-top: 18px;
+          --padding-bottom: 18px;
+          height: 62px;
+          font-size: 16px;
+          font-weight: 700;
+          letter-spacing: 0.8px;
+          margin: 24px 0 16px 0;
+          text-transform: none;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .register-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .register-btn:hover::before {
+          left: 100%;
+        }
+
+        .register-btn:hover {
+          transform: translateY(-3px);
+          --box-shadow: 0 16px 36px rgba(254, 60, 114, 0.55);
+        }
+
+        .register-btn:active {
+          transform: translateY(-1px);
+        }
+
+        .arrow-icon {
+          font-size: 20px;
+          transition: transform 0.3s ease;
+          margin-left: 8px;
+        }
+
+        .register-btn:hover .arrow-icon {
+          transform: translateX(4px);
+        }
+
+        /* Terms */
+        .terms {
+          text-align: center;
+          font-size: 12px;
+          color: #8E8E93;
+          line-height: 1.6;
+          margin: 0;
+          padding: 0 8px;
+        }
+
+        .terms span {
+          color: #FE3C72;
+          font-weight: 600;
+          cursor: pointer;
+          transition: color 0.3s ease;
+        }
+
+        .terms span:hover {
+          color: #E91E63;
+          text-decoration: underline;
+        }
+
+        /* Lien de connexion */
+        .login-redirect {
+          text-align: center;
+          margin-top: 28px;
+          animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .login-redirect p {
+          font-size: 16px;
+          color: rgba(255, 255, 255, 0.95);
+          margin: 0 0 14px 0;
+          font-weight: 500;
+        }
+
+        .login-link-btn {
+          --background: transparent;
+          --background-hover: #FFFFFF;
+          --color: #FFFFFF;
+          --color-hover: #FE3C72;
+          --border-color: #FFFFFF;
+          --border-width: 2px;
+          --border-radius: 30px;
+          --padding-start: 44px;
+          --padding-end: 44px;
+          --padding-top: 14px;
+          --padding-bottom: 14px;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 0.8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          text-transform: none;
+        }
+
+        .login-link-btn:hover {
+          transform: scale(1.05);
+          box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        }
+
+        .login-link-btn:active {
+          transform: scale(0.98);
+        }
+
+        /* Custom Loader */
+        .custom-loader {
+          --background: rgba(254, 60, 114, 0.95);
+          --spinner-color: #FFFFFF;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Success Alert */
+        .success-alert {
+          --background: #FFFFFF;
+          --max-width: 320px;
+        }
+
+        .success-alert .alert-button-group button {
+          color: #FE3C72 !important;
+          font-weight: 700 !important;
+          font-size: 15px !important;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.5);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.15;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.25;
+            transform: scale(1.1);
+          }
+        }
+
+        @keyframes pulse-slower {
+          0%, 100% {
+            opacity: 0.1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.2;
+            transform: scale(1.08);
+          }
+        }
+
+        @keyframes spin-very-slow {
+          from {
+            transform: translate(-50%, -50%) rotate(0deg);
+          }
+          to {
+            transform: translate(-50%, -50%) rotate(360deg);
+          }
+        }
+
+        /* ====================================== */
+        /*          RESPONSIVE DESIGN             */
+        /* ====================================== */
+
+        @media (max-width: 576px) {
+          .full-height {
+            padding: 20px 12px;
+          }
+
+          .flame-container {
+            width: 80px;
+            height: 80px;
+          }
+
+          .flame-logo {
+            font-size: 46px;
+          }
+
+          .app-name {
+            font-size: 48px;
+          }
+
+          .signup-title {
+            font-size: 30px;
+          }
+
+          .signup-subtitle {
+            font-size: 16px;
+          }
+
+          .form-wrapper {
+            padding: 32px 24px;
+            border-radius: 24px;
+          }
+
+          .input-field {
+            height: 58px;
+          }
+
+          .register-btn {
+            height: 58px;
+            font-size: 15px;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .full-height {
+            padding: 40px 24px;
+          }
+
+          .form-wrapper {
+            padding: 44px 36px;
+          }
+
+          .main-title-section {
+            margin-bottom: 44px;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .form-wrapper {
+            padding: 48px 44px;
+          }
+
+          .input-field {
+            height: 66px;
+          }
+
+          .register-btn {
+            height: 66px;
+            font-size: 17px;
+          }
+        }
+
+        @media (max-height: 700px) {
+          .logo-header {
+            margin-bottom: 24px;
+          }
+
+          .main-title-section {
+            margin-bottom: 24px;
+          }
+
+          .flame-container {
+            width: 70px;
+            height: 70px;
+          }
+
+          .flame-logo {
+            font-size: 40px;
+          }
+
+          .app-name {
+            font-size: 44px;
+          }
+        }
+
+        @media (min-width: 768px) and (max-height: 800px) {
+          .full-height {
+            padding: 32px 24px;
+          }
+        }
+      
