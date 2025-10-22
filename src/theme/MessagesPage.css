@@ -1,0 +1,568 @@
+/* ====================================== */
+/*    MESSAGES PAGE - TINDER PRO UI       */
+/* ====================================== */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+.messages-content {
+  --background: linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%);
+}
+
+/* ========== HEADER ========== */
+.messages-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+  box-shadow: 0 2px 16px rgba(254, 60, 114, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+
+.back-btn, .options-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #F8F8F8 0%, #F0F0F0 100%);
+  color: #1C1C1E;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.back-btn:hover, .options-btn:hover {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: white;
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 6px 20px rgba(254, 60, 114, 0.4);
+}
+
+.back-btn:active, .options-btn:active {
+  transform: scale(0.95);
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FE3C72 0%, #FF6B9D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -0.8px;
+  flex: 1;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(254, 60, 114, 0.15);
+}
+
+/* ========== SEARCH BAR ========== */
+.search-container {
+  padding: 16px 20px;
+  background: linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%);
+  border-bottom: 1px solid rgba(254, 60, 114, 0.08);
+  position: sticky;
+  top: 76px;
+  z-index: 99;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  font-size: 22px;
+  color: #FF6B9D;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 18px 16px 52px;
+  border: 2px solid transparent;
+  background: #FFFFFF;
+  border-radius: 16px;
+  font-size: 16px;
+  color: #1C1C1E;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #FE3C72;
+  background: #FFFFFF;
+  box-shadow: 0 6px 20px rgba(254, 60, 114, 0.2);
+  transform: translateY(-2px);
+}
+
+.search-input:focus + .search-icon {
+  color: #FE3C72;
+  transform: scale(1.1);
+}
+
+.search-input::placeholder {
+  color: #AFAFAF;
+  font-weight: 500;
+}
+
+/* ========== LOADING STATE ========== */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 20px;
+}
+
+.spinner {
+  width: 64px;
+  height: 64px;
+  border: 5px solid #F0F0F0;
+  border-top-color: #FE3C72;
+  border-right-color: #FF6B9D;
+  border-radius: 50%;
+  animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 16px rgba(254, 60, 114, 0.2);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #FE3C72 0%, #FF6B9D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  padding: 120px 28px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.empty-icon {
+  font-size: 100px;
+  margin-bottom: 28px;
+  opacity: 0.4;
+  filter: drop-shadow(0 4px 12px rgba(254, 60, 114, 0.2));
+}
+
+.empty-state h3 {
+  font-size: 26px;
+  font-weight: 900;
+  color: #1C1C1E;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.8px;
+}
+
+.empty-state p {
+  font-size: 17px;
+  color: #8E8E93;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.start-swiping-btn {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  border: none;
+  color: white;
+  padding: 18px 40px;
+  border-radius: 28px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(254, 60, 114, 0.4);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.3px;
+}
+
+.start-swiping-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(254, 60, 114, 0.5);
+}
+
+.start-swiping-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* ========== CONVERSATIONS LIST ========== */
+.conversations-container {
+  background: transparent;
+  padding: 0 16px 20px;
+}
+
+.conversations-list {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.conversation-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(254, 60, 114, 0.05) 0%, rgba(255, 107, 157, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.conversation-item:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(254, 60, 114, 0.15);
+}
+
+.conversation-item:hover::before {
+  opacity: 1;
+}
+
+.conversation-item:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* ========== AVATAR ========== */
+.avatar-wrapper {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+
+.conversation-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.conversation-item:hover .conversation-avatar {
+  transform: scale(1.05);
+  border-color: #FE3C72;
+  box-shadow: 0 6px 20px rgba(254, 60, 114, 0.3);
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+  border: 3px solid #FFFFFF;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.4);
+  animation: pulseOnline 2s ease-in-out infinite;
+}
+
+@keyframes pulseOnline {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 2px 12px rgba(52, 199, 89, 0.6);
+  }
+}
+
+/* ========== CONVERSATION CONTENT ========== */
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 1;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.conversation-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1C1C1E;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.4px;
+}
+
+.conversation-time {
+  font-size: 13px;
+  color: #AFAFAF;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: -0.2px;
+}
+
+.conversation-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.last-message {
+  font-size: 15px;
+  color: #8E8E93;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.last-message.unread {
+  color: #1C1C1E;
+  font-weight: 800;
+}
+
+.unread-badge {
+  min-width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE3C72 100%);
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 0 8px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(254, 60, 114, 0.4);
+  animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+.conversation-item {
+  animation: fadeInSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.conversation-item:nth-child(1) { animation-delay: 0.05s; }
+.conversation-item:nth-child(2) { animation-delay: 0.1s; }
+.conversation-item:nth-child(3) { animation-delay: 0.15s; }
+.conversation-item:nth-child(4) { animation-delay: 0.2s; }
+.conversation-item:nth-child(5) { animation-delay: 0.25s; }
+.conversation-item:nth-child(6) { animation-delay: 0.3s; }
+.conversation-item:nth-child(7) { animation-delay: 0.35s; }
+.conversation-item:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 576px) {
+  .messages-header {
+    padding: 14px 16px;
+  }
+
+  .back-btn, .options-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  .header-title {
+    font-size: 21px;
+  }
+
+  .search-container {
+    padding: 12px 16px;
+    top: 68px;
+  }
+
+  .search-input {
+    padding: 14px 16px 14px 48px;
+    font-size: 15px;
+    border-radius: 14px;
+  }
+
+  .conversations-container {
+    padding: 0 12px 16px;
+  }
+
+  .conversations-list {
+    gap: 10px;
+  }
+
+  .conversation-item {
+    padding: 16px 18px;
+    border-radius: 18px;
+  }
+
+  .avatar-wrapper {
+    width: 58px;
+    height: 58px;
+    margin-right: 14px;
+  }
+
+  .online-indicator {
+    width: 16px;
+    height: 16px;
+  }
+
+  .conversation-name {
+    font-size: 17px;
+  }
+
+  .conversation-time {
+    font-size: 12px;
+  }
+
+  .last-message {
+    font-size: 14px;
+  }
+
+  .unread-badge {
+    min-width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+
+  .empty-state {
+    padding: 100px 24px;
+  }
+
+  .empty-icon {
+    font-size: 80px;
+  }
+
+  .empty-state h3 {
+    font-size: 23px;
+  }
+
+  .empty-state p {
+    font-size: 16px;
+  }
+
+  .start-swiping-btn {
+    font-size: 17px;
+    padding: 16px 36px;
+  }
+}
+
+@media (min-width: 768px) {
+  .messages-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .search-container,
+  .conversations-container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+/* ========== SMOOTH SCROLLING ========== */
+.messages-content {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar - Tinder style */
+.messages-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #FF6B9D 0%, #FE3C72 100%);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.messages-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FE3C72 0%, #FF6B9D 100%);
+}
