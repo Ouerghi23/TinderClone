@@ -44,7 +44,6 @@ const MessagesPage: React.FC = () => {
 
     console.log("🔍 Current User UID:", currentUser.uid);
 
-    // Récupérer les matches
     const matchesQuery = query(
       collection(db, "matches"),
       where("userId", "==", currentUser.uid)
@@ -66,14 +65,13 @@ const MessagesPage: React.FC = () => {
         return;
       }
 
-      // Pour chaque match, récupérer le dernier message
+
       const conversationsData: Conversation[] = [];
 
       for (const match of matchedUsers) {
         const chatId = [currentUser.uid, match.userId].sort().join('_');
         
         try {
-          // Récupérer le dernier message de ce chat
           const messagesRef = collection(db, "chats", chatId, "messages");
           const lastMessageQuery = query(
             messagesRef, 
@@ -98,7 +96,6 @@ const MessagesPage: React.FC = () => {
               online: Math.random() > 0.5
             });
           } else {
-            // Nouveau match sans messages
             conversationsData.push({
               userId: match.userId,
               name: match.name,
@@ -111,8 +108,7 @@ const MessagesPage: React.FC = () => {
             });
           }
         } catch (error) {
-          console.error(`❌ Erreur conversation ${match.userId}:`, error);
-          // Ajouter quand même le match
+          console.error(` Erreur conversation ${match.userId}:`, error);
           conversationsData.push({
             userId: match.userId,
             name: match.name,
@@ -126,14 +122,14 @@ const MessagesPage: React.FC = () => {
         }
       }
 
-      // Trier par date
+    
       conversationsData.sort((a, b) => {
         if (!a.lastMessageTime) return 1;
         if (!b.lastMessageTime) return -1;
         return b.lastMessageTime.toMillis() - a.lastMessageTime.toMillis();
       });
 
-      console.log("✅ Conversations chargées:", conversationsData.length);
+      console.log(" Conversations chargées:", conversationsData.length);
       setConversations(conversationsData);
       setLoading(false);
     }, (error) => {
@@ -174,8 +170,6 @@ const MessagesPage: React.FC = () => {
   return (
     <IonPage>
       <IonContent className="messages-content">
-        
-        {/* Header */}
         <div className="messages-header">
           <button className="back-btn" onClick={() => history.push("/dashboard")}>
             <IonIcon icon={arrowBack} />
@@ -186,7 +180,7 @@ const MessagesPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Search Bar */}
+        
         <div className="search-container">
           <div className="search-wrapper">
             <IonIcon icon={searchOutline} className="search-icon" />
@@ -200,7 +194,6 @@ const MessagesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Conversations List */}
         <div className="conversations-container">
           {loading ? (
             <div className="loading-state">

@@ -101,10 +101,10 @@ const RegisterPage: React.FC = () => {
     <IonPage>
       <IonContent fullscreen className="register-content">
         
-        {/* Background Gradient */}
+    
         <div className="gradient-bg"></div>
         
-        {/* Animated Background Shapes */}
+    
         <div className="animated-bg-shapes">
           <div className="shape shape-1"></div>
           <div className="shape shape-2"></div>
@@ -115,7 +115,7 @@ const RegisterPage: React.FC = () => {
           <IonRow className="ion-justify-content-center ion-align-items-center full-height">
             <IonCol size="12" sizeMd="8" sizeLg="5" sizeXl="4">
               
-              {/* Logo Header */}
+          
               <div className="logo-header">
                 <div className="flame-container">
                   <IonIcon icon={flameSharp} className="flame-logo" />
@@ -123,17 +123,12 @@ const RegisterPage: React.FC = () => {
                 <h1 className="app-name">Aura</h1>
                 <div className="divider-line"></div>
               </div>
-
-              {/* Main Title */}
               <div className="main-title-section">
                 <h2 className="signup-title">Créer un compte</h2>
                 <p className="signup-subtitle">Rejoignez des milliers de personnes qui trouvent l'amour sur Aura</p>
               </div>
-
-              {/* Form Container */}
               <div className="form-wrapper">
-                
-                {/* Name Field */}
+              
                 <div className="input-field">
                   <div className="input-icon">
                     <IonIcon icon={person} />
@@ -164,8 +159,6 @@ const RegisterPage: React.FC = () => {
                     className="custom-ion-input"
                   />
                 </div>
-
-                {/* Password Field */}
                 <div className="input-field">
                   <div className="input-icon">
                     <IonIcon icon={lockClosed} />
@@ -181,7 +174,7 @@ const RegisterPage: React.FC = () => {
                   />
                 </div>
 
-                {/* Confirm Password Field */}
+              
                 <div className="input-field">
                   <div className="input-icon">
                     <IonIcon icon={lockClosed} />
@@ -197,14 +190,14 @@ const RegisterPage: React.FC = () => {
                   />
                 </div>
 
-                {/* Error Message */}
+              
                 {message && (
                   <div className="error-banner">
                     <span>{message}</span>
                   </div>
                 )}
 
-                {/* Register Button */}
+                
                 <IonButton 
                   expand="block"
                   onClick={handleRegister} 
@@ -215,13 +208,12 @@ const RegisterPage: React.FC = () => {
                   {!loading && <IonIcon icon={arrowForward} slot="end" className="arrow-icon" />}
                 </IonButton>
 
-                {/* Terms */}
+              
                 <p className="terms">
                   En continuant, vous acceptez nos <span>Conditions</span> et notre <span>Politique de confidentialité</span>
                 </p>
               </div>
 
-              {/* Login Link */}
               <div className="login-redirect">
                 <p>Vous avez déjà un compte ?</p>
                 <IonButton 

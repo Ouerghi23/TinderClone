@@ -26,7 +26,7 @@ const ForgotPassword: React.FC = () => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const history = useHistory();
 
-  // Étape 1 : Envoyer le code de réinitialisation
+
   const handleSendCode = async () => {
     if (!email) {
       setMessage("Veuillez entrer votre email");
@@ -62,7 +62,7 @@ const ForgotPassword: React.FC = () => {
     }
   };
 
-  // Étape 2 : Réinitialiser le mot de passe avec le code
+
   const handleResetPassword = async () => {
     if (!code || !newPassword || !confirmPassword) {
       setMessage("Tous les champs sont requis");
@@ -132,29 +132,24 @@ const ForgotPassword: React.FC = () => {
   return (
     <IonPage>
       <IonContent fullscreen className="forgot-content">
-        
-        {/* Background Gradient */}
+      
         <div className="gradient-bg"></div>
         
         <IonGrid className="main-grid">
           <IonRow className="ion-justify-content-center ion-align-items-center full-height">
             <IonCol size="12" sizeMd="8" sizeLg="5" sizeXl="4">
-              
-              {/* Back Button */}
+          
               <button onClick={handleBackToLogin} className="back-btn" disabled={loading}>
                 <IonIcon icon={arrowBack} />
                 <span>Retour</span>
               </button>
 
-              {/* Logo Header */}
               <div className="logo-header">
                 <div className="flame-container">
                   <IonIcon icon={flameSharp} className="flame-logo" />
                 </div>
                 <h1 className="app-name">Aura</h1>
               </div>
-
-              {/* Main Title */}
               <div className="main-title-section">
                 {step === 1 ? (
                   <>
@@ -169,7 +164,7 @@ const ForgotPassword: React.FC = () => {
                 )}
               </div>
 
-              {/* Form Container */}
+          
               <div className="form-wrapper">
                 
                 {step === 1 ? (
@@ -191,14 +186,13 @@ const ForgotPassword: React.FC = () => {
                       />
                     </div>
 
-                    {/* Error Message */}
+                  
                     {message && (
                       <div className="error-banner">
                         <span>{message}</span>
                       </div>
                     )}
 
-                    {/* Send Code Button */}
                     <button 
                       onClick={handleSendCode} 
                       disabled={loading}
@@ -215,7 +209,6 @@ const ForgotPassword: React.FC = () => {
                       <p>Entrez le code à 6 chiffres envoyé à votre adresse email</p>
                     </div>
 
-                    {/* Code Input */}
                     <div className="input-field">
                       <div className="input-icon">
                         <IonIcon icon={mail} />
@@ -233,7 +226,7 @@ const ForgotPassword: React.FC = () => {
                       />
                     </div>
 
-                    {/* New Password Input */}
+              
                     <div className="input-field">
                       <div className="input-icon">
                         <IonIcon icon={lockClosed} />
@@ -249,7 +242,6 @@ const ForgotPassword: React.FC = () => {
                       />
                     </div>
 
-                    {/* Confirm Password Input */}
                     <div className="input-field">
                       <div className="input-icon">
                         <IonIcon icon={lockClosed} />
@@ -265,14 +257,13 @@ const ForgotPassword: React.FC = () => {
                       />
                     </div>
 
-                    {/* Error Message */}
                     {message && (
                       <div className="error-banner">
                         <span>{message}</span>
                       </div>
                     )}
 
-                    {/* Reset Button */}
+                   
                     <button 
                       onClick={handleResetPassword} 
                       disabled={loading}
@@ -281,7 +272,7 @@ const ForgotPassword: React.FC = () => {
                       {loading ? "Réinitialisation..." : "RÉINITIALISER"}
                     </button>
 
-                    {/* Resend Code */}
+             
                     <div className="resend-section">
                       <p>Vous n'avez pas reçu le code ?</p>
                       <button 
@@ -296,8 +287,6 @@ const ForgotPassword: React.FC = () => {
                 )}
 
               </div>
-
-              {/* Footer Help */}
               <div className="help-section">
                 <p>Besoin d'aide ? <span className="contact-link">Contactez-nous</span></p>
               </div>

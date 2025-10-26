@@ -43,12 +43,12 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          {/* Routes publiques */}
+         
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/register" component={RegisterPage} />
           <Route exact path="/forgot-password" component={ForgotPassword} />
 
-          {/* Routes protégées */}
+        
           {user ? (
             <>
               <Route exact path="/dashboard" component={DashboardPage} />
@@ -56,8 +56,8 @@ const App: React.FC = () => {
               <Route exact path="/edit-profile" component={EditProfile} />
               <Route exact path="/matches" component={MatchesPage} />
               <Route exact path="/ai-chat" component={AIChatPage} />
-<Route path="/chat/:matchedUserId" component={ChatPage} />
-<Route path="/messages" component={MessagesPage} />
+              <Route path="/chat/:matchedUserId" component={ChatPage} />
+              <Route path="/messages" component={MessagesPage} />
 
               <Redirect exact from="/" to="/dashboard" />
             </>

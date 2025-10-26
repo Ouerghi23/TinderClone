@@ -1,494 +1,683 @@
-    * {
-          -webkit-tap-highlight-color: transparent;
-        }
-
-        .loading-content {
-          --background: #FFFFFF;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        /* Background avec dégradés rosés romantiques */
-        .gradient-bg {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, #FF6B9D 0%, #FE5C85 25%, #FE3C72 50%, #E91E63 75%, #C2185B 100%);
-          z-index: 0;
-        }
-
-        /* Formes décoratives animées */
-        .animated-bg-shapes {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 1;
-          overflow: hidden;
-          pointer-events: none;
-        }
-
-        .shape {
-          position: absolute;
-          border-radius: 50%;
-          opacity: 0.15;
-        }
-
-        .shape-1 {
-          top: -10%;
-          left: -10%;
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-          animation: pulse-slow 6s ease-in-out infinite;
-        }
-
-        .shape-2 {
-          bottom: -15%;
-          right: -15%;
-          width: 600px;
-          height: 600px;
-          background: radial-gradient(circle, rgba(255,182,193,0.5) 0%, transparent 70%);
-          animation: pulse-slower 8s ease-in-out infinite;
-        }
-
-        .shape-3 {
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 700px;
-          height: 700px;
-          background: radial-gradient(circle, rgba(255,105,180,0.3) 0%, transparent 70%);
-          animation: spin-very-slow 20s linear infinite;
-        }
-
-        /* Container principal */
-        .loading-container {
-          position: relative;
-          z-index: 2;
-          max-width: 400px;
-          width: 100%;
-          padding: 40px 20px;
-          box-sizing: border-box;
-          text-align: center;
-        }
-
-        /* Logo Aura */
-        .logo-wrapper {
-          margin-bottom: 60px;
-          animation: fadeInDown 0.8s ease-out;
-        }
-
-        .icon-glow-container {
-          position: relative;
-          display: inline-block;
-          animation: logoFloat 3s ease-in-out infinite;
-        }
-
-        .main-icon-loading {
-          font-size: 100px;
-          color: #FFFFFF;
-          filter: drop-shadow(0 0 25px rgba(255,255,255,0.9));
-          animation: flicker 2.5s ease-in-out infinite;
-        }
-
-        @keyframes flicker {
-          0%, 100% { 
-            opacity: 1; 
-            transform: scale(1);
-            filter: drop-shadow(0 0 25px rgba(255,255,255,0.9));
-          }
-          50% { 
-            opacity: 0.85; 
-            transform: scale(1.08);
-            filter: drop-shadow(0 0 35px rgba(255,255,255,1));
-          }
-        }
-
-        .pulse-glow {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 120px;
-          height: 120px;
-          background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-          border-radius: 50%;
-          animation: pulseGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes pulseGlow {
-          0%, 100% { 
-            opacity: 0.5; 
-            transform: translate(-50%, -50%) scale(1); 
-          }
-          50% { 
-            opacity: 0.8; 
-            transform: translate(-50%, -50%) scale(1.1); 
-          }
-        }
-
-        .app-title-loading {
-          font-size: 56px;
-          font-weight: 800;
-          color: #FFFFFF;
-          margin: 24px 0 12px;
-          letter-spacing: -2px;
-          text-shadow: 0 4px 20px rgba(0,0,0,0.2);
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        .divider-line {
-          height: 3px;
-          width: 80px;
-          margin: 0 auto;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-          border-radius: 2px;
-          animation: fadeIn 0.8s ease-out 0.3s both;
-        }
-
-        /* Spinner moderne */
-        .spinner-wrapper {
-          position: relative;
-          width: 120px;
-          height: 120px;
-          margin: 0 auto 50px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          animation: slideUp 0.8s ease-out 0.4s both;
-        }
-
-        .spinner-circle {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-        }
-
-        .spinner-outer {
-          border: 4px solid rgba(255, 255, 255, 0.2);
-          animation: rotate 2s linear infinite;
-        }
-
-        .spinner-inner {
-          border: 4px solid transparent;
-          border-top: 4px solid #FFFFFF;
-          border-right: 4px solid #FFFFFF;
-          animation: rotate 1.5s ease-in-out infinite;
-          filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
-        }
-
-        @keyframes rotate {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        .center-heart-icon {
-          font-size: 42px;
-          color: #FFFFFF;
-          animation: heartbeat 1.5s ease-in-out infinite;
-          filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
-          z-index: 1;
-        }
-
-        @keyframes heartbeat {
-          0%, 100% { 
-            transform: scale(1); 
-          }
-          50% { 
-            transform: scale(1.15); 
-          }
-        }
-
-        /* Texte de chargement */
-        .text-content {
-          margin-bottom: 50px;
-          animation: fadeInUp 0.8s ease-out 0.5s both;
-        }
-
-        .loading-message {
-          color: #FFFFFF;
-          font-weight: 700;
-          font-size: 32px;
-          margin: 0 0 16px;
-          line-height: 1.3;
-          text-shadow: 0 2px 12px rgba(0,0,0,0.2);
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .gradient-text {
-          background: linear-gradient(135deg, #FFFFFF 0%, #FFE6EB 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          display: inline-block;
-          text-shadow: none;
-          filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));
-        }
-
-        .loading-subtitle {
-          color: rgba(255, 255, 255, 0.95);
-          font-size: 17px;
-          font-weight: 400;
-          line-height: 1.6;
-          max-width: 320px;
-          margin: 0 auto;
-          text-shadow: 0 1px 4px rgba(0,0,0,0.15);
-        }
-
-        /* Indicateur de points animés */
-        .dots-indicator {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 14px;
-          animation: fadeIn 0.8s ease-out 0.6s both;
-        }
-
-        .dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background-color: #FFFFFF;
-          opacity: 0.6;
-          animation: bounce 1.4s ease-in-out infinite both;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        @keyframes bounce {
-          0%, 80%, 100% { 
-            transform: scale(0.8);
-            opacity: 0.4;
-          }
-          40% { 
-            transform: scale(1.3);
-            opacity: 1;
-          }
-        }
-
-        /* Animations générales */
-        @keyframes logoFloat {
-          0%, 100% { 
-            transform: translateY(0px); 
-          }
-          50% { 
-            transform: translateY(-10px); 
-          }
-        }
-
-        @keyframes fadeInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes pulse-slow {
-          0%, 100% {
-            opacity: 0.15;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.25;
-            transform: scale(1.1);
-          }
-        }
-
-        @keyframes pulse-slower {
-          0%, 100% {
-            opacity: 0.1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.2;
-            transform: scale(1.08);
-          }
-        }
-
-        @keyframes spin-very-slow {
-          from {
-            transform: translate(-50%, -50%) rotate(0deg);
-          }
-          to {
-            transform: translate(-50%, -50%) rotate(360deg);
-          }
-        }
-
-        /* ====================================== */
-        /*          RESPONSIVE DESIGN             */
-        /* ====================================== */
-
-        @media (max-width: 576px) {
-          .loading-container {
-            padding: 30px 16px;
-          }
-
-          .main-icon-loading {
-            font-size: 80px;
-          }
-
-          .pulse-glow {
-            width: 100px;
-            height: 100px;
-          }
-
-          .app-title-loading {
-            font-size: 48px;
-          }
-
-          .spinner-wrapper {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 40px;
-          }
-
-          .center-heart-icon {
-            font-size: 36px;
-          }
-
-          .loading-message {
-            font-size: 28px;
-          }
-
-          .loading-subtitle {
-            font-size: 16px;
-            max-width: 280px;
-          }
-
-          .dot {
-            width: 8px;
-            height: 8px;
-          }
-        }
-
-        @media (min-width: 768px) {
-          .loading-container {
-            padding: 60px 20px;
-          }
-
-          .logo-wrapper {
-            margin-bottom: 70px;
-          }
-
-          .spinner-wrapper {
-            width: 140px;
-            height: 140px;
-            margin-bottom: 60px;
-          }
-
-          .center-heart-icon {
-            font-size: 48px;
-          }
-        }
-
-        @media (max-height: 700px) {
-          .loading-container {
-            padding: 20px 16px;
-          }
-
-          .logo-wrapper {
-            margin-bottom: 40px;
-          }
-
-          .main-icon-loading {
-            font-size: 70px;
-          }
-
-          .app-title-loading {
-            font-size: 44px;
-          }
-
-          .spinner-wrapper {
-            width: 90px;
-            height: 90px;
-            margin-bottom: 30px;
-          }
-
-          .center-heart-icon {
-            font-size: 32px;
-          }
-
-          .text-content {
-            margin-bottom: 30px;
-          }
-
-          .loading-message {
-            font-size: 24px;
-          }
-
-          .loading-subtitle {
-            font-size: 15px;
-          }
-        }
-
-        @media (min-width: 768px) and (orientation: landscape) and (max-height: 600px) {
-          .loading-container {
-            max-width: 600px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            align-items: center;
-          }
-
-          .logo-wrapper {
-            flex: 0 0 40%;
-            margin-bottom: 0;
-          }
-
-          .spinner-wrapper {
-            flex: 0 0 40%;
-            margin-bottom: 0;
-          }
-
-          .text-content {
-            flex: 0 0 100%;
-            margin-top: 20px;
-          }
-
-          .dots-indicator {
-            flex: 0 0 100%;
-          }
-        }
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.loading-content {
+  --background: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Background avec dégradés rosés romantiques */
+.gradient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FE5C85 25%, #FE3C72 50%, #E91E63 75%, #C2185B 100%);
+  z-index: 0;
+}
+
+/* Formes décoratives animées */
+.animated-bg-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+}
+
+.shape-1 {
+  top: -10%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.shape-2 {
+  bottom: -15%;
+  right: -15%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,182,193,0.5) 0%, transparent 70%);
+  animation: pulse-slower 8s ease-in-out infinite;
+}
+
+.shape-3 {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(255,105,180,0.3) 0%, transparent 70%);
+  animation: spin-very-slow 20s linear infinite;
+}
+
+/* Container principal */
+.loading-container {
+  position: relative;
+  z-index: 2;
+  max-width: 400px;
+  width: 90%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Logo Aura */
+.logo-wrapper {
+  margin-bottom: 60px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.icon-glow-container {
+  position: relative;
+  display: inline-block;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+.main-icon-loading {
+  font-size: 100px;
+  color: #FFFFFF;
+  filter: drop-shadow(0 0 25px rgba(255,255,255,0.9));
+  animation: flicker 2.5s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+    filter: drop-shadow(0 0 25px rgba(255,255,255,0.9));
+  }
+  50% { 
+    opacity: 0.85; 
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 35px rgba(255,255,255,1));
+  }
+}
+
+.pulse-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    opacity: 0.5; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: translate(-50%, -50%) scale(1.1); 
+  }
+}
+
+.app-title-loading {
+  font-size: 56px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 24px 0 12px;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+  line-height: 1.1;
+}
+
+.divider-line {
+  height: 3px;
+  width: 80px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  border-radius: 2px;
+  animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+/* Spinner moderne */
+.spinner-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideUp 0.8s ease-out 0.4s both;
+}
+
+.spinner-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.spinner-outer {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  animation: rotate 2s linear infinite;
+}
+
+.spinner-inner {
+  border: 4px solid transparent;
+  border-top: 4px solid #FFFFFF;
+  border-right: 4px solid #FFFFFF;
+  animation: rotate 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.center-heart-icon {
+  font-size: 42px;
+  color: #FFFFFF;
+  animation: heartbeat 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+  z-index: 1;
+}
+
+@keyframes heartbeat {
+  0%, 100% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(1.15); 
+  }
+}
+
+/* Texte de chargement */
+.text-content {
+  margin-bottom: 50px;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+  width: 100%;
+}
+
+.loading-message {
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 32px;
+  margin: 0 0 16px;
+  line-height: 1.3;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFE6EB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));
+}
+
+.loading-subtitle {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Indicateur de points animés */
+.dots-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  opacity: 0.6;
+  animation: bounce 1.4s ease-in-out infinite both;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+  40% { 
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Animations générales */
+@keyframes logoFloat {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulse-slower {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes spin-very-slow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* ====================================== */
+/*          RESPONSIVE DESIGN             */
+/* ====================================== */
+
+/* Très petits écrans (<= 380px) */
+@media (max-width: 380px) {
+  .loading-container {
+    padding: 20px 12px;
+    width: 95%;
+  }
+
+  .main-icon-loading {
+    font-size: 70px;
+  }
+
+  .pulse-glow {
+    width: 90px;
+    height: 90px;
+  }
+
+  .app-title-loading {
+    font-size: 42px;
+    margin: 16px 0 8px;
+  }
+
+  .spinner-wrapper {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 30px;
+  }
+
+  .center-heart-icon {
+    font-size: 32px;
+  }
+
+  .loading-message {
+    font-size: 26px;
+  }
+
+  .loading-subtitle {
+    font-size: 15px;
+    max-width: 260px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .logo-wrapper {
+    margin-bottom: 40px;
+  }
+
+  .text-content {
+    margin-bottom: 30px;
+  }
+}
+
+/* Mobile standard (381px - 576px) */
+@media (max-width: 576px) {
+  .loading-container {
+    padding: 30px 16px;
+  }
+
+  .main-icon-loading {
+    font-size: 80px;
+  }
+
+  .pulse-glow {
+    width: 100px;
+    height: 100px;
+  }
+
+  .app-title-loading {
+    font-size: 48px;
+  }
+
+  .spinner-wrapper {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 40px;
+  }
+
+  .center-heart-icon {
+    font-size: 36px;
+  }
+
+  .loading-message {
+    font-size: 28px;
+  }
+
+  .loading-subtitle {
+    font-size: 16px;
+    max-width: 280px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Tablettes (577px - 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+  .loading-container {
+    max-width: 450px;
+    padding: 50px 30px;
+  }
+
+  .main-icon-loading {
+    font-size: 110px;
+  }
+
+  .pulse-glow {
+    width: 130px;
+    height: 130px;
+  }
+
+  .app-title-loading {
+    font-size: 60px;
+  }
+
+  .spinner-wrapper {
+    width: 130px;
+    height: 130px;
+  }
+
+  .center-heart-icon {
+    font-size: 46px;
+  }
+
+  .loading-message {
+    font-size: 34px;
+  }
+
+  .loading-subtitle {
+    font-size: 18px;
+    max-width: 350px;
+  }
+}
+
+/* Desktop (769px+) */
+@media (min-width: 769px) {
+  .loading-container {
+    padding: 60px 20px;
+    max-width: 500px;
+  }
+
+  .logo-wrapper {
+    margin-bottom: 70px;
+  }
+
+  .main-icon-loading {
+    font-size: 120px;
+  }
+
+  .pulse-glow {
+    width: 140px;
+    height: 140px;
+  }
+
+  .app-title-loading {
+    font-size: 64px;
+  }
+
+  .spinner-wrapper {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 60px;
+  }
+
+  .center-heart-icon {
+    font-size: 48px;
+  }
+
+  .loading-message {
+    font-size: 36px;
+  }
+
+  .loading-subtitle {
+    font-size: 18px;
+    max-width: 380px;
+  }
+}
+
+/* Grands écrans (1024px+) */
+@media (min-width: 1024px) {
+  .loading-container {
+    max-width: 550px;
+  }
+
+  .shape-1 {
+    width: 600px;
+    height: 600px;
+  }
+
+  .shape-2 {
+    width: 700px;
+    height: 700px;
+  }
+
+  .shape-3 {
+    width: 800px;
+    height: 800px;
+  }
+}
+
+/* Hauteur réduite (clavier ouvert, petits écrans) */
+@media (max-height: 700px) {
+  .loading-container {
+    padding: 20px 16px;
+  }
+
+  .logo-wrapper {
+    margin-bottom: 40px;
+  }
+
+  .main-icon-loading {
+    font-size: 70px;
+  }
+
+  .app-title-loading {
+    font-size: 44px;
+  }
+
+  .spinner-wrapper {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 30px;
+  }
+
+  .center-heart-icon {
+    font-size: 32px;
+  }
+
+  .text-content {
+    margin-bottom: 30px;
+  }
+
+  .loading-message {
+    font-size: 24px;
+  }
+
+  .loading-subtitle {
+    font-size: 15px;
+  }
+}
+
+/* Mode paysage mobile */
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 600px) {
+  .loading-container {
+    max-width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px 20px;
+  }
+
+  .logo-wrapper {
+    flex: 0 0 40%;
+    margin-bottom: 0;
+  }
+
+  .spinner-wrapper {
+    flex: 0 0 40%;
+    margin-bottom: 0;
+    width: 80px;
+    height: 80px;
+  }
+
+  .center-heart-icon {
+    font-size: 28px;
+  }
+
+  .text-content {
+    flex: 0 0 100%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+
+  .dots-indicator {
+    flex: 0 0 100%;
+  }
+
+  .main-icon-loading {
+    font-size: 60px;
+  }
+
+  .app-title-loading {
+    font-size: 36px;
+  }
+
+  .loading-message {
+    font-size: 22px;
+  }
+
+  .loading-subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Support pour les appareils sans hover */
+@media (hover: none) {
+  .loading-content {
+    cursor: default;
+  }
+}
+
+/* Prévention du zoom sur iOS */
+@media (max-width: 768px) {
+  .loading-container {
+    touch-action: manipulation;
+  }
+  
+  .search-input, .loading-message, .loading-subtitle {
+    font-size: 16px; /* Prévention du zoom iOS */
+  }
+}

@@ -42,12 +42,11 @@ const ChatPage: React.FC = () => {
   const db = getFirestore(app);
   const currentUser = auth.currentUser;
 
-  // Créer un chatId unique (ordre alphabétique des IDs)
   const chatId = currentUser && matchedUserId 
     ? [currentUser.uid, matchedUserId].sort().join('_')
     : '';
 
-  // Scroll vers le bas
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -56,7 +55,7 @@ const ChatPage: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Charger les infos du match
+  
   useEffect(() => {
     const loadMatchInfo = async () => {
       if (!matchedUserId) return;
@@ -81,7 +80,6 @@ const ChatPage: React.FC = () => {
     loadMatchInfo();
   }, [matchedUserId, db]);
 
-  // Écouter les messages en temps réel
   useEffect(() => {
     if (!chatId) return;
 
@@ -99,7 +97,7 @@ const ChatPage: React.FC = () => {
     return () => unsubscribe();
   }, [chatId, db]);
 
-  // Envoyer un message
+
   const sendMessage = async () => {
     if (!input.trim() || !currentUser || !chatId) return;
 
@@ -118,7 +116,7 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: any) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -148,7 +146,7 @@ const ChatPage: React.FC = () => {
     <IonPage>
       <IonContent className="chat-content">
         
-        {/* Header */}
+        
         <div className="chat-header">
           <button className="back-btn" onClick={() => history.goBack()}>
             <IonIcon icon={arrowBack} />
@@ -170,10 +168,10 @@ const ChatPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Messages */}
+        
         <div className="messages-wrapper">
           
-          {/* Message de début de conversation */}
+          
           {messages.length === 0 && (
             <div className="welcome-message">
               <div className="welcome-icon">
@@ -212,7 +210,7 @@ const ChatPage: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
+        
         <div className="input-area">
           <div className="input-wrapper">
             <input
@@ -236,7 +234,7 @@ const ChatPage: React.FC = () => {
 
       </IonContent>
 
-     
+    
     </IonPage>
   );
 };

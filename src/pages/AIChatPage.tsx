@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IonPage, IonContent, IonIcon } from "@ionic/react";
-import { arrowBack, send, sparkles, heart, chatbubble } from "ionicons/icons";
+import { arrowBack, send, sparkles, heart } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
-import "../theme/AIChatPage.css"
+import "../theme/AIChatPage.css";
+
 interface Message {
   id: string;
   sender: "user" | "aura";
@@ -10,7 +11,6 @@ interface Message {
   timestamp: Date;
 }
 
-// Helper pour analyser l'humeur générale
 const analyzeMood = (messages: Message[]): string => {
   const userMessages = messages.filter(m => m.sender === "user").map(m => m.text.toLowerCase()).join(" ");
   
@@ -22,24 +22,17 @@ const analyzeMood = (messages: Message[]): string => {
   return "neutral";
 };
 
-// 💖 Moteur de réponse Aura amélioré
 const getAuraResponse = (userMessage: string, conversationHistory: Message[]): string => {
   const message = userMessage.toLowerCase();
   const wordCount = userMessage.split(' ').length;
   const hasQuestion = message.includes('?');
-  
-  // Analyse du contexte de la conversation
   const recentMessages = conversationHistory.slice(-5);
   const userMood = analyzeMood(recentMessages);
-
-  // ===== SALUTATIONS =====
   const greetings = [
     "Hey toi ! 💕 Super de te retrouver ici. Comment ça va aujourd'hui ?",
     "Coucou ! ✨ Je suis trop contente de discuter avec toi. Quoi de neuf ?",
     "Salut belle âme ! 💖 Raconte-moi comment s'est passée ta journée ?"
   ];
-
-  // ===== ÉMOTIONS NÉGATIVES =====
   const sadnessEmpathy = [
     "Je comprends vraiment ce que tu ressens 😢 Les moments difficiles font partie de la vie, mais tu n'es pas seul(e). Qu'est-ce qui te pèse le plus en ce moment ?",
     "Ça me touche de voir que tu ne vas pas bien 💙 Prends le temps qu'il faut pour exprimer ce que tu ressens. Je suis là pour toi, sans jugement.",
@@ -52,7 +45,7 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     "Tu n'es pas seul(e), même si tu te sens isolé(e) 💫 Parfois, c'est l'occasion de mieux se connaître. Que penses-tu de faire quelque chose qui te fait du bien ?"
   ];
 
-  // ===== ÉMOTIONS POSITIVES =====
+ 
   const happiness = [
     "Yesss ! 🎉 Ton énergie positive me fait tellement plaisir ! C'est quoi qui te rend si heureux/heureuse ?",
     "J'adore ! 😍 Continue de savourer ces moments de bonheur. Qu'est-ce qui s'est passé de génial ?",
@@ -65,7 +58,7 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     "J'adore ton énergie ! 💃 C'est génial de te voir aussi motivé(e) !"
   ];
 
-  // ===== AMOUR & RELATIONS =====
+
   const loveDating = [
     "Ah l'amour... 💕 C'est à la fois magique et terrifiant ! Tu penses à quelqu'un en particulier ?",
     "Les relations amoureuses sont un vrai voyage 💖 Raconte-moi où tu en es. Tu es en couple, tu cherches, ou c'est compliqué ?",
@@ -84,14 +77,12 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     "Je sais que ça fait mal 😢 Mais cette douleur prouve que tu as aimé sincèrement. C'est courageux. Comment puis-je t'aider ?"
   ];
 
-  // ===== CONFIANCE EN SOI =====
   const confidence = [
     "La confiance en soi se construit petit à petit 💪 Commence par identifier tes qualités. Tu en as plein, crois-moi ! Qu'est-ce qui te rend unique ?",
     "Tu sais quoi ? Tu es déjà assez, là maintenant ✨ La confiance vient quand on s'accepte tel(le) qu'on est. Dans quel domaine aimerais-tu plus de confiance ?",
     "La confiance c'est pas inné, ça se travaille ! 🌟 Parle-moi de tes doutes. Ensemble on va trouver tes forces cachées."
   ];
 
-  // ===== CONSEILS & SOUTIEN =====
   const support = [
     "Je suis 100% là pour toi 💙 Raconte-moi tout ce qui te tracasse. Aucun jugement, juste de l'écoute.",
     "D'accord, on va réfléchir ensemble 🤔 Explique-moi la situation en détail pour que je puisse mieux t'aider.",
@@ -104,88 +95,77 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     "Les obstacles sont là pour te rendre plus fort(e) 🔥 Tu as déjà surmonté tant de choses. Celui-là aussi va passer !"
   ];
 
-  // ===== GRATITUDE =====
+
   const gratitude = [
     "Avec tout mon cœur ! 💖 C'est vraiment mon plaisir de t'accompagner. N'hésite jamais à revenir.",
     "De rien du tout ! ✨ Tu mérites d'être écouté(e) et soutenu(e). C'est naturel !",
     "Ça me touche que tu me remercies 🥰 Mais vraiment, c'est normal. Je suis là pour ça !"
   ];
 
-  // ===== AU REVOIR =====
   const farewell = [
     "À très vite ! 💫 Prends soin de toi et n'oublie pas : tu es incroyable !",
     "Reviens quand tu veux ! 🌙 Ma porte (virtuelle) est toujours ouverte pour toi.",
     "Ciao bella ! 🌷 J'ai hâte de te retrouver. Passe une super journée/soirée !"
   ];
 
-  // ===== LOGIQUE DE RÉPONSE AMÉLIORÉE =====
   
-  // Salutations
+
   if (message.match(/\b(bonjour|salut|coucou|hello|hey|yo|wesh)\b/)) {
     return greetings[Math.floor(Math.random() * greetings.length)];
   }
 
-  // Tristesse & dépression
+  
   if (message.match(/\b(triste|déprim|mal|pas bien|horrible|nul|merde|chiant)\b/)) {
     return sadnessEmpathy[Math.floor(Math.random() * sadnessEmpathy.length)];
   }
-
-  // Solitude
+  
   if (message.match(/\b(seul|seule|isolé|personne|abandonné|tout seul)\b/)) {
     return loneliness[Math.floor(Math.random() * loneliness.length)];
   }
 
-  // Bonheur
+  
   if (message.match(/\b(heureux|heureuse|content|joyeux|super|génial|top|cool|bien)\b/) && !message.includes('pas')) {
     return happiness[Math.floor(Math.random() * happiness.length)];
   }
 
-  // Excitation
   if (message.match(/\b(excité|trop|grave|ouf|incroyable|dingue)\b/)) {
     return excitement[Math.floor(Math.random() * excitement.length)];
   }
 
-  // Rupture amoureuse
   if (message.match(/\b(rupture|ex|quitté|laissé|séparé|fini|cassé)\b/)) {
     return heartbreak[Math.floor(Math.random() * heartbreak.length)];
   }
 
-  // Dating & rencontres
   if (message.match(/\b(dating|date|rencontre|rendez-vous|tinder|match|swipe)\b/)) {
     return datingAdvice[Math.floor(Math.random() * datingAdvice.length)];
   }
 
-  // Amour général
+  
   if (message.match(/\b(amour|amoureuse|amoureux|crush|kiff|plait|attire|relation|couple)\b/)) {
     return loveDating[Math.floor(Math.random() * loveDating.length)];
   }
 
-  // Confiance en soi
   if (message.match(/\b(confiance|timide|peur|angoisse|stress|complexe|doute)\b/)) {
     return confidence[Math.floor(Math.random() * confidence.length)];
   }
 
-  // Motivation
+ 
   if (message.match(/\b(motivation|motivé|objectif|but|réussir|y arriver)\b/)) {
     return motivation[Math.floor(Math.random() * motivation.length)];
   }
 
-  // Demande d'aide
   if (message.match(/\b(aide|conseil|soutien|aider|problème|difficulté|besoin)\b/)) {
     return support[Math.floor(Math.random() * support.length)];
   }
 
-  // Remerciements
   if (message.match(/\b(merci|thanks|thx|gratitude|reconnaissance)\b/)) {
     return gratitude[Math.floor(Math.random() * gratitude.length)];
   }
 
-  // Au revoir
   if (message.match(/\b(bye|au revoir|à plus|à bientôt|salut|ciao|tchao)\b/)) {
     return farewell[Math.floor(Math.random() * farewell.length)];
   }
 
-  // Questions
   if (hasQuestion) {
     const questionResponses = [
       "Bonne question ! 🤔 Laisse-moi réfléchir... Je pense que ça dépend vraiment de ta situation personnelle. Tu peux m'en dire plus ?",
@@ -195,7 +175,7 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     return questionResponses[Math.floor(Math.random() * questionResponses.length)];
   }
 
-  // Messages longs (engagement)
+
   if (wordCount > 20) {
     const longResponses = [
       "Wow, merci de te confier comme ça 💙 Ça prend du courage. Je vois que c'est important pour toi. Ce qui ressort le plus c'est... Comment tu te sens par rapport à tout ça ?",
@@ -205,7 +185,6 @@ const getAuraResponse = (userMessage: string, conversationHistory: Message[]): s
     return longResponses[Math.floor(Math.random() * longResponses.length)];
   }
 
-  // Réponses par défaut contextuelles
   const contextualDefaults = [
     "Hmm je vois 💭 Continue, je suis vraiment intéressée par ce que tu dis !",
     "D'accord ! 💕 Raconte-moi plus en détail, j'ai envie de mieux comprendre.",
@@ -290,7 +269,7 @@ const AIChatPage: React.FC = () => {
     <IonPage>
       <IonContent className="ai-chat-content">
         
-        {/* Header */}
+       
         <div className="chat-header">
           <button className="back-btn" onClick={() => history.push("/dashboard")}>
             <IonIcon icon={arrowBack} />
@@ -311,8 +290,6 @@ const AIChatPage: React.FC = () => {
 
           <div style={{ width: '40px' }}></div>
         </div>
-
-        {/* Messages Container */}
         <div className="messages-wrapper">
           
           {messages.map((msg, index) => (
@@ -354,7 +331,7 @@ const AIChatPage: React.FC = () => {
             </div>
           )}
 
-          {/* Quick Replies */}
+
           {messages.length === 1 && (
             <div className="quick-replies-section">
               <p className="quick-replies-title">Suggestions :</p>
@@ -375,7 +352,6 @@ const AIChatPage: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
         <div className="input-area">
           <div className="input-wrapper">
             <input

@@ -41,7 +41,7 @@ const EditProfile: React.FC = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState<"success" | "error">("success");
 
-  /* Charger le profil existant */
+
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
@@ -66,7 +66,7 @@ const EditProfile: React.FC = () => {
     fetchProfile();
   }, [user]);
 
-  /* Géolocalisation */
+
   const getUserLocation = async () => {
     if (!navigator.geolocation) {
       showMessage("Géolocalisation non supportée", "error");
@@ -85,7 +85,7 @@ const EditProfile: React.FC = () => {
     );
   };
 
-  /* Ajouter une image */
+  
   const handleAddImage = () => {
     if (!newImageUrl.trim()) {
       showMessage("Entrez une URL d'image", "error");
@@ -112,13 +112,13 @@ const EditProfile: React.FC = () => {
     showMessage("Photo ajoutée !", "success");
   };
 
-  /* Supprimer une image */
+  
   const handleDeleteImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
     showMessage("Photo supprimée", "success");
   };
 
-  /* Réorganiser */
+  
   const moveImage = (fromIndex: number, toIndex: number) => {
     const newImages = [...images];
     const [movedImage] = newImages.splice(fromIndex, 1);
@@ -126,7 +126,7 @@ const EditProfile: React.FC = () => {
     setImages(newImages);
   };
 
-  /* Ajouter un intérêt */
+
   const handleAddInterest = () => {
     if (!newInterest.trim()) return;
     if (interests.length >= 10) {
@@ -141,12 +141,12 @@ const EditProfile: React.FC = () => {
     setNewInterest("");
   };
 
-  /* Supprimer un intérêt */
+
   const removeInterest = (index: number) => {
     setInterests(prev => prev.filter((_, i) => i !== index));
   };
 
-  /* Sauvegarder */
+
   const handleSave = async () => {
     if (!user) return;
     
@@ -203,9 +203,8 @@ const EditProfile: React.FC = () => {
     <IonPage>
       <IonContent className="edit-profile-content">
         
-        {/* Header */}
         <div className="profile-header">
-         {/* <button className="back-btn" onClick={() => router.push("/dashboard")}> */}
+       
           <button className="back-btn" onClick={() => router.push("/dashboard", "back", "pop")}>
 
             <IonIcon icon={arrowBack} />
@@ -215,8 +214,7 @@ const EditProfile: React.FC = () => {
         </div>
 
         <div className="content-wrapper">
-          
-          {/* Section Photos */}
+    
           <div className="section">
             <div className="section-header">
               <IonIcon icon={camera} className="section-icon" />
@@ -224,7 +222,6 @@ const EditProfile: React.FC = () => {
               <span className="photo-count">{images.length}/6</span>
             </div>
 
-            {/* Ajouter photo */}
             <div className="add-photo-container">
               <input
                 type="text"
@@ -243,7 +240,7 @@ const EditProfile: React.FC = () => {
               </button>
             </div>
 
-            {/* Grille photos */}
+    
             {images.length > 0 ? (
               <div className="photos-grid">
                 {images.map((imageUrl, index) => (
@@ -285,8 +282,6 @@ const EditProfile: React.FC = () => {
               </div>
             )}
           </div>
-
-          {/* Section Infos */}
           <div className="section">
             <div className="section-header">
               <IonIcon icon={heart} className="section-icon" />
@@ -348,7 +343,7 @@ const EditProfile: React.FC = () => {
             </div>
           </div>
 
-          {/* Section Intérêts */}
+          
           <div className="section">
             <div className="section-header">
               <IonIcon icon={sparkles} className="section-icon" />
@@ -392,7 +387,6 @@ const EditProfile: React.FC = () => {
             )}
           </div>
 
-          {/* Bouton Save */}
           <button 
             className="save-btn"
             onClick={handleSave}

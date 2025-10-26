@@ -31,7 +31,7 @@ const MatchesPage: React.FC = () => {
       return;
     }
 
-    // Query pour récupérer les matches où userId = currentUser.uid
+   
     const matchesQuery = query(
       collection(db, "matches"),
       where("userId", "==", currentUser.uid)
@@ -43,19 +43,19 @@ const MatchesPage: React.FC = () => {
         ...(doc.data() as Omit<Match, "id">),
       }));
       
-      // Trier par date de création (plus récent en premier)
+  
       matchesData.sort((a, b) => {
         const dateA = a.createdAt?.toDate?.() || new Date(0);
         const dateB = b.createdAt?.toDate?.() || new Date(0);
         return dateB.getTime() - dateA.getTime();
       });
       
-      console.log("✅ Matches trouvés:", matchesData.length);
-      console.log("📋 Matches data:", matchesData);
+      console.log(" Matches trouvés:", matchesData.length);
+      console.log(" Matches data:", matchesData);
       setMatches(matchesData);
       setLoading(false);
     }, (error) => {
-      console.error("❌ Erreur Firestore:", error);
+      console.error(" Erreur Firestore:", error);
       setLoading(false);
     });
 
@@ -63,7 +63,7 @@ const MatchesPage: React.FC = () => {
   }, [currentUser, db, history]);
 
   const getOtherUserInfo = (match: Match) => {
-    // Retourne directement les infos du match
+    
     return {
       name: match.name,
       photoURL: match.image,
@@ -72,7 +72,7 @@ const MatchesPage: React.FC = () => {
   };
 
   const handleChatClick = (match: Match) => {
-    // Utiliser matchedUserId pour la conversation
+   
     history.push(`/chat/${match.matchedUserId}`);
   };
 
@@ -97,7 +97,7 @@ const MatchesPage: React.FC = () => {
     <IonPage>
       <IonContent className="matches-content">
         
-        {/* Header */}
+
         <div className="matches-header">
           <button className="back-btn" onClick={() => history.push("/dashboard")}>
             <IonIcon icon={arrowBack} />

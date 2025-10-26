@@ -51,11 +51,9 @@ const ProfilePage: React.FC = () => {
     try {
       const user = auth.currentUser;
       if (user && user.email) {
-        // Ré-authentification
         const credential = EmailAuthProvider.credential(user.email, currentPassword);
         await reauthenticateWithCredential(user, credential);
-        
-        // Mise à jour du mot de passe
+      
         await updatePassword(user, newPassword);
         setMessage("✅ Mot de passe mis à jour avec succès !");
         setCurrentPassword("");

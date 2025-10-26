@@ -17,7 +17,7 @@ import {
   informationCircle
 } from "ionicons/icons";
 
-/* ---------- Types ---------- */
+
 interface Profile {
   id: string;
   name: string;
@@ -36,7 +36,7 @@ interface DragState {
   currentY: number;
 }
 
-/* ---------- Composant principal ---------- */
+
 const DashboardPage: React.FC = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -53,14 +53,14 @@ const DashboardPage: React.FC = () => {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const db = getFirestore(app);
 
-  /* 🔥 Charger profils Firestore (exclure l'utilisateur connecté) */
+
   useEffect(() => {
     const auth = getAuth(app);
     const currentUser = auth.currentUser;
 
     const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
       const fetchedProfiles: Profile[] = snapshot.docs
-        .filter((doc) => doc.id !== currentUser?.uid) // Exclure l'utilisateur connecté
+        .filter((doc) => doc.id !== currentUser?.uid) 
         .map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<Profile, "id">),
@@ -86,7 +86,6 @@ const DashboardPage: React.FC = () => {
     if (!currentUser) return;
 
     try {
-      // 📂 Créer un document dans la collection "matches"
       const matchRef = doc(collection(db, "matches"), `${currentUser.uid}_${matchedProfile.id}`);
       await setDoc(matchRef, {
         userId: currentUser.uid,
@@ -98,14 +97,14 @@ const DashboardPage: React.FC = () => {
         createdAt: new Date(),
       });
 
-      // ✅ Affiche notification de succès
+
       showToast("Vous avez matché !");
     } catch (error) {
       console.error("Erreur lors de l'ajout du match :", error);
     }
   };
 
-  /* 🔄 Swipe */
+  
   const swipe = useCallback((direction: "left" | "right" | "up") => {
     const currentCardRef = cardRefs.current[currentIndex.current];
     if (!currentCardRef) return;
@@ -120,7 +119,7 @@ const DashboardPage: React.FC = () => {
     } else if (direction === "right") {
       moveX = 400;
       rotate = 20;
-      // Ajouter le match quand on swipe à droite (coeur)
+      
       const currentProfile = profiles[currentIndex.current];
       if (currentProfile) {
         addMatch(currentProfile, false);
@@ -128,7 +127,6 @@ const DashboardPage: React.FC = () => {
     } else if (direction === "up") {
       moveY = -400;
       rotate = 0;
-      // Ajouter le match quand on swipe vers le haut (étoile - super like)
       const currentProfile = profiles[currentIndex.current];
       if (currentProfile) {
         addMatch(currentProfile, true);
@@ -145,7 +143,7 @@ const DashboardPage: React.FC = () => {
     }, 300);
   }, [profiles]);
 
-  /* 🖱 Gestion drag */
+  
   const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
     const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
@@ -172,7 +170,6 @@ const DashboardPage: React.FC = () => {
     card.style.transition = "none";
     card.style.transform = `translate(${diffX}px, ${diffY}px) rotate(${diffX * 0.05}deg)`;
     
-    // Visual feedback
     const opacity = Math.abs(diffX) / 150;
     if (diffX > 0) {
       card.style.setProperty('--like-opacity', Math.min(opacity, 1).toString());
@@ -205,7 +202,7 @@ const DashboardPage: React.FC = () => {
     setDragState({ isDragging: false, startX: 0, currentX: 0, startY: 0, currentY: 0 });
   };
 
-  /* 📸 Navigation entre images */
+  
   const handleImageNavigation = (e: React.MouseEvent, direction: 'prev' | 'next') => {
     e.stopPropagation();
     const currentProfile = profiles[currentIndex.current];
@@ -218,14 +215,14 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  /* 🚪 Déconnexion */
+  
   const handleLogout = async () => {
     const auth = getAuth(app);
     await signOut(auth);
     history.push("/login");
   };
 
-  /* 💳 Affichage des cartes */
+
   const renderCards = useMemo(
     () =>
       profiles
@@ -248,11 +245,11 @@ const DashboardPage: React.FC = () => {
             onTouchMove={index === 0 ? handleDragMove : undefined}
             onTouchEnd={index === 0 ? handleDragEnd : undefined}
           >
-            {/* Like/Nope Stamps */}
+          
             <div className="stamp like-stamp">LIKE</div>
             <div className="stamp nope-stamp">NOPE</div>
             
-            {/* Image navigation zones */}
+            
             {index === 0 && (
               <>
                 <div 
@@ -266,7 +263,7 @@ const DashboardPage: React.FC = () => {
               </>
             )}
 
-            {/* Image indicators */}
+            
             {profile.images && profile.images.length > 1 && (
               <div className="image-indicators">
                 {profile.images.map((_, i) => (
@@ -318,7 +315,7 @@ const DashboardPage: React.FC = () => {
   return (
     <IonApp>
       <IonContent className="dashboard-content">
-        {/* Top Bar */}
+        
         <div className="top-bar">
           <div className="aura-logo">
             <IonIcon icon={flameSharp} className="logo-icon" />
@@ -344,7 +341,6 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Container des cartes */}
         <div className="tinder-container">
           {profiles.length > 0 ? renderCards : (
             <div className="empty-state">
@@ -355,7 +351,6 @@ const DashboardPage: React.FC = () => {
           )}
         </div>
 
-        {/* Actions */}
         <div className="actions">
           <button 
             className="action-btn nope-btn"
@@ -379,7 +374,7 @@ const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Bottom Navigation (optionnel) */}
+        
         <div className="bottom-nav">
           <button className="nav-item active">
             <IonIcon icon={flameSharp} />
