@@ -84,7 +84,7 @@ npm >= 8.0.0
 
 ```bash
 git clone https://github.com/Ouerghi23/TinderClone.git
-cd aura-dating-app
+cd aura-dating-appTinderClone
 ```
 
 ### Installer les dépendances
